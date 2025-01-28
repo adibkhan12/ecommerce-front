@@ -1,6 +1,6 @@
 import Link from "next/link";
 import styled from "styled-components";
-import Center from "@/components/center";
+import Center from "@/components/Center";
 import { useContext, useState } from "react";
 import { CartContext } from "@/components/CartContext";
 import BarsIcon from "@/components/icons/Bars";

@@ -1,4 +1,4 @@
-import Center from "@/components/center";
+import Center from "@/components/Center";
 import styled from "styled-components";
 import Button from "@/components/Button";
 import ButtonLink from "@/components/ButtonLink";

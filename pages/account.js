@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import Center from "@/components/center";
+import Center from "@/components/Center";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Button from "@/components/Button";
 import styled from "styled-components";

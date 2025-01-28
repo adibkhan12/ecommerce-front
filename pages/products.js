@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import Center from "@/components/center";
+import Center from "@/components/Center";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/product";
 import ProductsGrid from "@/components/ProductsGrid";

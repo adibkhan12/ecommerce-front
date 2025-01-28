@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import styled from "styled-components";
-import Center from "@/components/center";
+import Center from "@/components/Center";
 import Button from "@/components/Button";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "@/components/CartContext";

@@ -1,6 +1,6 @@
 import ProductImages from "@/components/ProductImages";
 import Header from "@/components/Header";
-import Center from "@/components/center";
+import Center from "@/components/Center";
 import Title from "@/components/Title";
 import CartIcon from "@/components/icons/CartIcon";
 import {mongooseConnect} from "@/lib/mongoose";
