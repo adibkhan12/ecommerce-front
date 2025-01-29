@@ -185,7 +185,7 @@ export default function AccountPage() {
                         <h2>Account Details</h2>
                         {status === "loading" ? (
                             <p>Loading...</p>
-                        ) : (   
+                        ) : (
                             <>
                                 <StyledInput type="text" placeholder="Name" value={name}
                                              onChange={(e) => setName(e.target.value)}/>
