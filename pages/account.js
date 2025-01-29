@@ -204,7 +204,7 @@ export default function AccountPage() {
                                 <StyledInput type="text" placeholder="Country" value={country}
                                              onChange={(e) => setCountry(e.target.value)}/>
                                 <ActionButton onClick={saveAddress}>Save</ActionButton>
-                                <Divider/>
+                                <Divider/> 
                                 { session ?(
                                     <>
                                         <p>Welcome! <strong>{session.user.name}</strong></p>
