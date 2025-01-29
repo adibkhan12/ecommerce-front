@@ -9,6 +9,7 @@ const AddressSchema = new Schema({
     country: String,
     addressLine1: String,
     addressLine2: String,
+    number: String,
 })
 
 export const Address = models?.Address || model('Address', AddressSchema);

@@ -110,6 +110,7 @@ export default function AccountPage() {
     const [email, setEmail] = useState("");
     const [addressLine1, setAddressLine1] = useState("");
     const [addressLine2, setAddressLine2] = useState("");
+    const [number, setNumber] = useState("");
     const [city, setCity] = useState("");
     const [country, setCountry] = useState("");
     const [postalCode, setPostalCode] = useState("");
@@ -146,6 +147,7 @@ export default function AccountPage() {
                     setName(response.data.name || "");
                     setAddressLine1(response.data.addressLine1 || "");
                     setAddressLine2(response.data.addressLine2 || "");
+                    setNumber(response.data.number || "");
                     setCity(response.data.city || "");
                     setCountry(response.data.country || "");
                     setPostalCode(response.data.postalCode || "");
@@ -157,6 +159,7 @@ export default function AccountPage() {
                         name: session.user.name || "",
                         email: session.user.email,
                         city: "",
+                        number:"",
                         postalCode: "",
                         addressLine1: "",
                         addressLine2: "",
@@ -195,6 +198,8 @@ export default function AccountPage() {
                                              onChange={(e) => setAddressLine1(e.target.value)}/>
                                 <StyledInput type="text" placeholder="Address Line 2" value={addressLine2}
                                              onChange={(e) => setAddressLine2(e.target.value)}/>
+                                <StyledInput type="text" placeholder="WhatsApp number" value={number}
+                                             onChange={(e) => setNumber(e.target.value)}/>
                                 <CityHolder>
                                     <StyledInput type="text" placeholder="City" value={city}
                                                  onChange={(e) => setCity(e.target.value)}/>
@@ -204,7 +209,7 @@ export default function AccountPage() {
                                 <StyledInput type="text" placeholder="Country" value={country}
                                              onChange={(e) => setCountry(e.target.value)}/>
                                 <ActionButton onClick={saveAddress}>Save</ActionButton>
-                                <Divider/> 
+                                <Divider/>
                                 { session ?(
                                     <>
                                         <p>Welcome! <strong>{session.user.name}</strong></p>

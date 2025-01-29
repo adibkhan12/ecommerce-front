@@ -11,7 +11,7 @@ export default async function handler(req, res){
     const {
         name, email, city,
         postalCode, addressLine1,
-        addressLine2,country
+        addressLine2,country,number
         ,cartProducts,paymentMethod,
     } = req.body;
     await mongooseConnect();
@@ -43,6 +43,7 @@ export default async function handler(req, res){
         postalCode,
         addressLine1,
         addressLine2,
+        number,
         country,
         paid: paymentMethod === 'COD' ? false : null, // Mark as unpaid for COD
     })

@@ -7,6 +7,7 @@ import { CartContext } from "@/components/CartContext";
 import axios from "axios";
 import Table from "@/components/Table";
 import Input from "@/components/Input";
+import Image from "next/image";
 
 const ColumnWrapper = styled.div`
     display: grid;
@@ -124,7 +125,7 @@ const SuccessMessage = styled.div`
 const ModernButton = styled(Button)`
     font-size: 1.1rem;
     padding: 4px 16px;
-    border-radius: 6px; // Less curve, more rectangular
+    border-radius: 6px; 
     background: transparent;
     color: black;
     border: none;
@@ -163,12 +164,13 @@ const ModernButton = styled(Button)`
 export default function CartPage() {
     const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
     const [products, setProducts] = useState([]);
-    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [city, setCity] = useState("");
     const [postalCode, setPostalCode] = useState("");
     const [addressLine1, setAddressLine1] = useState("");
     const [addressLine2, setAddressLine2] = useState("");
+    const [number, setNumber] = useState("");
+    const [name, setName] = useState("");
     const [country, setCountry] = useState("");
     const [isClient, setIsClient] = useState(false);
 
@@ -195,6 +197,7 @@ export default function CartPage() {
             setEmail(response.data.email);
             setAddressLine1(response.data.addressLine1);
             setAddressLine2(response.data.addressLine2);
+            setNumber(response.data.number);
             setCity(response.data.city);
             setCountry(response.data.country);
             setPostalCode(response.data.postalCode);
@@ -210,7 +213,7 @@ export default function CartPage() {
     }
 
     function validateForm() {
-        if (!name || !email || !city || !postalCode || !addressLine1 || !country) {
+        if (!name || !email || !city || !postalCode || !addressLine1 || !number || !country) {
             alert("Please fill in all required fields.");
             return false;
         }
@@ -228,6 +231,7 @@ export default function CartPage() {
                 postalCode,
                 addressLine1,
                 addressLine2,
+                number,
                 country,
                 cartProducts,
                 paymentMethod: "COD",
@@ -235,7 +239,7 @@ export default function CartPage() {
 
             if (response.status === 200) {
                 clearCart();
-                alert("Your order has been placed successfully with Cash on Delivery!");
+                alert("Soon you will get confirmation message via email or whatsapp");
                 window.location.href = "/cart?success=1";
             } else {
                 alert("Failed to place order. Please try again.");
@@ -258,7 +262,7 @@ export default function CartPage() {
                 <Center>
                     <ColumnWrapper>
                         <Box>
-                            <h1>Payment Successful</h1>
+                            <h1>Order Placed Successful</h1>
                             <SuccessMessage>Your order will reach your destination on time.</SuccessMessage>
                             <p>THANK YOU FOR SHOPPING WITH US!</p>
                         </Box>
@@ -290,7 +294,7 @@ export default function CartPage() {
                                     <tr key={product._id}>
                                         <ProductInfoCell>
                                             <ProductImageBox>
-                                                <img src={product.images[0]} alt={product.title} />
+                                                <Image src={product.images[0]} alt={product.title} />
                                             </ProductImageBox>
                                             {product.title}
                                         </ProductInfoCell>
@@ -347,6 +351,13 @@ export default function CartPage() {
                                 value={addressLine2}
                                 name="addressLine2"
                                 onChange={(ev) => setAddressLine2(ev.target.value)}
+                            />
+                            <StyledInput
+                                type="text"
+                                placeholder="WhatsApp number"
+                                value={number}
+                                name="number"
+                                onChange={(ev) => setNumber(ev.target.value)}
                             />
                             <CityHolder>
                                 <StyledInput
