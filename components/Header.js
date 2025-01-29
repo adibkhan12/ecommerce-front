@@ -94,7 +94,11 @@ const NavButton = styled.button`
     justify-content: center;
     align-items: center;
     font-size: 1.2rem;
-
+    
+    svg {
+        stroke: white; /* Explicitly setting stroke color */
+    }
+    
     @media screen and (min-width: 768px) {
         display: none;
     }
