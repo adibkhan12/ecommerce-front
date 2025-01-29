@@ -126,7 +126,7 @@ export default function AccountPage() {
     }
 
     function saveAddress() {
-        const data = { name, email, city, postalCode, addressLine1, addressLine2, country };
+        const data = { name, email, city, postalCode, addressLine1, addressLine2, number ,country };
         axios.put("/api/address", data);
     }
 
