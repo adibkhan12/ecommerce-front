@@ -114,6 +114,7 @@ export default function AccountPage() {
     const [country, setCountry] = useState("");
     const [postalCode, setPostalCode] = useState("");
     const [loaded, setLoaded] = useState(false);
+    const [isNewUser, setIsNewUser] = useState(false);
 
     async function logout() {
         await signOut({ callbackUrl: process.env.NEXT_PUBLIC_URL });
@@ -134,22 +135,40 @@ export default function AccountPage() {
             return;
         }
         console.log("Session data:", session);
+        setEmail(session.user.email);
+        setName(session.user.name);
 
         axios
             .get("/api/address")
             .then((response) => {
-                console.log("Fetched address:", response.data);
-                setName(response.data.name || "");
-                setEmail(response.data.email || "");
-                setAddressLine1(response.data.addressLine1 || "");
-                setAddressLine2(response.data.addressLine2 || "");
-                setCity(response.data.city || "");
-                setCountry(response.data.country || "");
-                setPostalCode(response.data.postalCode || "");
+                if (response.data && Object.keys(response.data).length > 0) {
+                    console.log("Fetched address:", response.data);
+                    setName(response.data.name || "");
+                    setAddressLine1(response.data.addressLine1 || "");
+                    setAddressLine2(response.data.addressLine2 || "");
+                    setCity(response.data.city || "");
+                    setCountry(response.data.country || "");
+                    setPostalCode(response.data.postalCode || "");
+                    setIsNewUser(false);
+                } else {
+                    console.log("No existing data found. Creating new user profile.");
+                    setIsNewUser(true);
+                    axios.put("/api/address", {
+                        name: session.user.name || "",
+                        email: session.user.email,
+                        city: "",
+                        postalCode: "",
+                        addressLine1: "",
+                        addressLine2: "",
+                        country: "",
+                    });
+                }
                 setLoaded(true);
             })
             .catch((error) => {
                 console.error("Error fetching address:", error);
+                setIsNewUser(true);
+                setLoaded(true);
             });
     }, [session]);
 
@@ -166,7 +185,7 @@ export default function AccountPage() {
                         <h2>Account Details</h2>
                         {status === "loading" ? (
                             <p>Loading...</p>
-                        ) : session ? (
+                        ) : (
                             <>
                                 <StyledInput type="text" placeholder="Name" value={name}
                                              onChange={(e) => setName(e.target.value)}/>
@@ -186,13 +205,17 @@ export default function AccountPage() {
                                              onChange={(e) => setCountry(e.target.value)}/>
                                 <ActionButton onClick={saveAddress}>Save</ActionButton>
                                 <Divider/>
-                                <p>Welcome! <strong>{session.user.name}</strong></p>
-                                <Button primary={true} onClick={logout}>Logout</Button>
-                            </>
-                        ) : (
-                            <>
-                                <p>Please log in to view and update your account details.</p>
-                                <Button primary={true} onClick={login}>Login with Google</Button>
+                                { session ?(
+                                    <>
+                                        <p>Welcome! <strong>{session.user.name}</strong></p>
+                                        <Button primary={true} onClick={logout}>Logout</Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p>Please log in to view and update your account details.</p>
+                                        <Button primary={true} onClick={login}>Login with Google</Button>
+                                    </>
+                                )}
                             </>
                         )}
                     </StyledWhiteBox>
