@@ -4,7 +4,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Button from "@/components/Button";
 import styled from "styled-components";
 import WhiteBox from "@/components/Box";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Input from "@/components/Input";
 import axios from "axios";
 
@@ -103,7 +103,9 @@ const Divider = styled.hr`
 `;
 
 export default function AccountPage() {
-    const { data: session } = useSession();
+    console.log("Rendering Account Page");
+
+    const { data: session, status } = useSession();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [addressLine1, setAddressLine1] = useState("");
@@ -121,23 +123,35 @@ export default function AccountPage() {
         await signIn("google");
     }
 
-    function saveAddress(){
-        const data = {name,email,city,postalCode,addressLine1,addressLine2,country};
-        axios.put('/api/address',data)
+    function saveAddress() {
+        const data = { name, email, city, postalCode, addressLine1, addressLine2, country };
+        axios.put("/api/address", data);
     }
 
     useEffect(() => {
-        axios.get('/api/address').then(response => {
-            setName(response.data.name);
-            setEmail(response.data.email);
-            setAddressLine1(response.data.addressLine1);
-            setAddressLine2(response.data.addressLine2);
-            setCity(response.data.city);
-            setCountry(response.data.country);
-            setPostalCode(response.data.postalCode);
-            setLoaded(true);
-        });
-    }, []);
+        if (!session?.user?.email) {
+            console.log("Session is null, user might not be logged in.");
+            return;
+        }
+        console.log("Session data:", session);
+
+        axios
+            .get("/api/address")
+            .then((response) => {
+                console.log("Fetched address:", response.data);
+                setName(response.data.name || "");
+                setEmail(response.data.email || "");
+                setAddressLine1(response.data.addressLine1 || "");
+                setAddressLine2(response.data.addressLine2 || "");
+                setCity(response.data.city || "");
+                setCountry(response.data.country || "");
+                setPostalCode(response.data.postalCode || "");
+                setLoaded(true);
+            })
+            .catch((error) => {
+                console.error("Error fetching address:", error);
+            });
+    }, [session]);
 
     return (
         <>
@@ -150,7 +164,9 @@ export default function AccountPage() {
                     </StyledWhiteBox>
                     <StyledWhiteBox>
                         <h2>Account Details</h2>
-                        {loaded && (
+                        {status === "loading" ? (
+                            <p>Loading...</p>
+                        ) : session ? (
                             <>
                                 <StyledInput type="text" placeholder="Name" value={name}
                                              onChange={(e) => setName(e.target.value)}/>
@@ -170,20 +186,15 @@ export default function AccountPage() {
                                              onChange={(e) => setCountry(e.target.value)}/>
                                 <ActionButton onClick={saveAddress}>Save</ActionButton>
                                 <Divider/>
-                                {session ? (
-                                    <>
-                                        <p>Welcome! <strong>{session.user.name}</strong></p>
-                                        <Button primary={true} onClick={logout}>Logout</Button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <p>Please log in to view and update your account details.</p>
-                                        <Button primary={true} onClick={login}>Login with Google</Button>
-                                    </>
-                                )}
+                                <p>Welcome! <strong>{session.user.name}</strong></p>
+                                <Button primary={true} onClick={logout}>Logout</Button>
+                            </>
+                        ) : (
+                            <>
+                                <p>Please log in to view and update your account details.</p>
+                                <Button primary={true} onClick={login}>Login with Google</Button>
                             </>
                         )}
-
                     </StyledWhiteBox>
                 </ColsWrapper>
             </Center>
