@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import {useRef, useState} from "react";
 
 // Styled Components
 const MainImageContainer = styled.div`
@@ -30,6 +30,41 @@ const ThumbnailWrapper = styled.div`
     margin-top: 10px;
 `;
 
+const ThumbnailContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    max-width: 400px; /* Max width constraint (Red Box) */
+    overflow: hidden;
+`;
+
+const ScrollableWrapper = styled.div`
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 10px;
+    padding: 5px;
+    width: 300px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+`;
+
+const ScrollZone = styled.div`
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    background: transparent;
+    cursor: pointer;
+    z-index: 10;
+    ${props => props.left ? `left: 0;` : `right: 0;`}
+`;
+
 const Thumbnail = styled.img`
     ${props => props.active? `
         border-color: #ccc;
@@ -52,9 +87,22 @@ const Thumbnail = styled.img`
 
 `;
 
-// Component Function
 export default function ProductImages({ images }) {
     const [selectedImage, setSelectedImage] = useState(images?.[0]);
+    const scrollRef = useRef(null);
+    let scrollInterval;
+
+    const startScroll = (direction) => {
+        if (scrollRef.current) {
+            scrollInterval = setInterval(() => {
+                scrollRef.current.scrollLeft += direction === "right" ? 20 : -20;
+            }, 50);
+        }
+    };
+
+    const stopScroll = () => {
+        clearInterval(scrollInterval);
+    };
 
     if (!images || images.length === 0) {
         return <p>No images available</p>;
@@ -65,17 +113,22 @@ export default function ProductImages({ images }) {
             <MainImageContainer>
                 <MainImage src={selectedImage} alt="Selected Product Image" />
             </MainImageContainer>
-            <ThumbnailWrapper>
-                {images.map((image, index) => (
-                    <Thumbnail
-                        key={index}
-                        src={image}
-                        alt={`Thumbnail ${index + 1}`}
-                        onClick={() => setSelectedImage(image)}
-                        className={selectedImage === image ? "active" : ""}
-                    />
-                ))}
-            </ThumbnailWrapper>
+
+            <ThumbnailContainer>
+                <ScrollZone left onMouseEnter={() => startScroll("left")} onMouseLeave={stopScroll} />
+                <ScrollableWrapper ref={scrollRef}>
+                    {images.map((image, index) => (
+                        <Thumbnail
+                            key={index}
+                            src={image}
+                            alt={`Thumbnail ${index + 1}`}
+                            onClick={() => setSelectedImage(image)}
+                            active={selectedImage === image}
+                        />
+                    ))}
+                </ScrollableWrapper>
+                <ScrollZone onMouseEnter={() => startScroll("right")} onMouseLeave={stopScroll} />
+            </ThumbnailContainer>
         </div>
     );
 }
