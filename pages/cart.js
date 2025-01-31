@@ -36,37 +36,24 @@ const ProductInfoCell = styled.td`
 `;
 
 const ProductImageBox = styled.div`
-    width: 90px;
-    height: 120px;
-    padding: 5px;
+    width: 140px;
+    height: 140px;
+    padding: 8px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 12px;
-    transition: all 0.2s ease;
+    overflow: hidden;
+    background: white; /* Ensures better visibility */
 
     img {
-        max-height: 90px;
-        max-width: 90px;
-        border-radius: 8px;
-    }
-
-    &:hover {
-        transform: scale(1.05);
-    }
-
-    @media screen and (min-width: 768px) {
-        padding: 12px;
-        width: 140px;
-        height: 140px;
-
-        img {
-            max-height: 110px;
-            max-width: 110px;
-        }
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain; /* Ensures the image is fully visible without cropping */
     }
 `;
+
 
 const QuantityLabel = styled.span`
     padding: 0 12px;
@@ -125,7 +112,7 @@ const SuccessMessage = styled.div`
 const ModernButton = styled(Button)`
     font-size: 1.1rem;
     padding: 4px 16px;
-    border-radius: 6px; 
+    border-radius: 6px;
     background: transparent;
     color: black;
     border: none;
@@ -161,7 +148,7 @@ const ModernButton = styled(Button)`
     }
 `;
 
-export default function CartPage() {
+export default function CartPage({_id}) {
     const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
     const [products, setProducts] = useState([]);
     const [email, setEmail] = useState("");
@@ -192,17 +179,27 @@ export default function CartPage() {
         if (isClient && window.location.href.includes("success")) {
             clearCart();
         }
-        axios.get('/api/address').then((response) => {
-            setName(response.data.name);
-            setEmail(response.data.email);
-            setAddressLine1(response.data.addressLine1);
-            setAddressLine2(response.data.addressLine2);
-            setNumber(response.data.number);
-            setCity(response.data.city);
-            setCountry(response.data.country);
-            setPostalCode(response.data.postalCode);
-        })
+        axios.get('/api/address')
+            .then((response) => {
+                setName(response.data.name || "");
+                setEmail(response.data.email || "");
+                setAddressLine1(response.data.addressLine1 || "");
+                setAddressLine2(response.data.addressLine2 || "");
+                setNumber(response.data.number || "");
+                setCity(response.data.city || "");
+                setCountry(response.data.country || "");
+                setPostalCode(response.data.postalCode || "");
+            })
+            .catch((error) => {
+                if (error.response && error.response.status === 401) {
+                    // User is not logged in, so don't block the cart
+                    console.warn("User not logged in. Proceeding without address details.");
+                } else {
+                    console.error("Error fetching address:", error);
+                }
+            });
     }, [isClient]);
+
 
     function moreOfThisProduct(id) {
         addProduct(id);
@@ -239,7 +236,6 @@ export default function CartPage() {
 
             if (response.status === 200) {
                 clearCart();
-                alert("Soon you will get confirmation message via email or whatsapp");
                 window.location.href = "/cart?success=1";
             } else {
                 alert("Failed to place order. Please try again.");
@@ -263,7 +259,7 @@ export default function CartPage() {
                     <ColumnWrapper>
                         <Box>
                             <h1>Order Placed Successful</h1>
-                            <SuccessMessage>Your order will reach your destination on time.</SuccessMessage>
+                            <SuccessMessage>Soon you will get confirmation message via email or WhatsApp</SuccessMessage>
                             <p>THANK YOU FOR SHOPPING WITH US!</p>
                         </Box>
                     </ColumnWrapper>
@@ -294,7 +290,13 @@ export default function CartPage() {
                                     <tr key={product._id}>
                                         <ProductInfoCell>
                                             <ProductImageBox>
-                                                <Image src={product.images[0]} alt={product.title} />
+                                                <Image
+                                                    src={product.images[0]}
+                                                    alt={product.title}
+                                                    width={140} // Set a fixed width
+                                                    height={140} // Set a fixed height
+                                                    style={{ objectFit: "contain" }} // Ensures full visibility
+                                                />
                                             </ProductImageBox>
                                             {product.title}
                                         </ProductInfoCell>
