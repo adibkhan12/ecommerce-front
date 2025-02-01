@@ -308,9 +308,9 @@ export default function CartPage({_id}) {
                                             <ModernButton onClick={() => moreOfThisProduct(product._id)}>+</ModernButton>
                                         </td>
                                         <td>
-                                            AED{" "}
                                             {cartProducts.filter((id) => id === product._id).length *
-                                                product.price}
+                                                product.price}{" "}
+                                            AED
                                         </td>
                                     </tr>
                                 ))}

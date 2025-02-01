@@ -52,7 +52,7 @@ const Price = styled.div`
     @media screen and (min-width: 768px){
         font-size: 1.2rem;
         font-weight: 600;
-        text-align: left; 
+        text-align: left;
     }
 `;
 
@@ -70,13 +70,13 @@ export default function ProductWhiteBox({_id,title, description,price,images}) {
                 <Title href={url}>{title}</Title>
                 <PriceRow>
                     <Price>
-                        AED {price}
+                        {price} AED
                     </Price>
                     <Button block onClick={() => addProduct(_id)} primary={1} outline={1} >
                         Add to Cart
                     </Button>
                 </PriceRow>
-                </ProductInfoBox>
+            </ProductInfoBox>
         </ProductWrapper>
     )
 }
