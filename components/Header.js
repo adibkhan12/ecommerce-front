@@ -89,20 +89,21 @@ const NavButton = styled.button`
     cursor: pointer;
     border: none;
     position: relative;
-    z-index: 3;
+    z-index: 9999;  /* <-- Increase to make sure it's visible */
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 1.2rem;
     
-    svg {
-        stroke: white; /* Explicitly setting stroke color */
+    svg{
+        stroke: white;
     }
     
     @media screen and (min-width: 768px) {
         display: none;
     }
 `;
+
 
 const CartBadge = styled.span`
     background-color: #ff9900; /* Highlight color */

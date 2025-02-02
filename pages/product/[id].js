@@ -49,14 +49,14 @@ const Price = styled.span`
 `;
 
 const ProductDetails = styled.div`
-  background: #f8f8f8;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: #f8f8f8;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
-  @media screen and (min-width: 768px) {
-    padding: 30px;
-  }
+    @media screen and (min-width: 768px) {
+        padding: 30px;
+    }
 `;
 
 const ProductDescription = styled.p`
@@ -132,7 +132,17 @@ export default function ProductPage({ product }) {
                     </ImageBox>
                     <ProductDetails>
                         <Title>{product.title}</Title>
-                        <ProductDescription>{product.description}</ProductDescription>
+                        {product.properties && (
+                            <div>
+                                {Object.entries(product.properties).map(([key, value]) => (
+                                    <p key={key}>
+                                        <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong> {value}
+                                    </p>
+                                ))}
+                            </div>
+                        )}
+                        <ProductDescription dangerouslySetInnerHTML={{ __html: product.description.replace(/\n/g, '<br />') }} />
+
                         <PriceRow>
                             <Price>AED {product.price}</Price>
                             <StyledButton onClick={() => addProduct(product._id)} primary={1} outline={1}>
