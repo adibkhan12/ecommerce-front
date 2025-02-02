@@ -89,17 +89,21 @@ const NavButton = styled.button`
     color: #fff;
     cursor: pointer;
     border: none;
-    position: fixed;
-    z-index: 10001;  /* <-- Increase to make sure it's visible */
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 1.2rem;
-    
-    svg{
+    margin-left: 10px; /* Add spacing between search icon & hamburger */
+
+    position: relative; /* Changed from fixed to relative to avoid overlap */
+    z-index: 10; /* Lowered from 10001 to prevent unintended overlaps */
+
+    svg {
         stroke: white;
+        width: 26px; /* Standardized width */
+        height: 26px;
     }
-    
+
     @media screen and (min-width: 768px) {
         display: none;
     }
@@ -123,18 +127,19 @@ const CartBadge = styled.span`
 const SideIcons = styled.div`
     display: flex;
     align-items: center;
-    a{
+    gap: 20px; /* Increased spacing to avoid overlap */
+
+    a {
         display: inline-block;
-        min-width: 20px;
+        min-width: 24px;
         color: white;
-        svg{
-            padding-top: 5px;
-            width: 19px;
-            height: 19px;
-            
+
+        svg {
+            padding-top: 3px;
+            width: 22px; /* Standardized width */
+            height: 22px;
         }
     }
-    
 `;
 
 export default function Header() {
