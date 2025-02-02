@@ -36,7 +36,9 @@ const Wrapper = styled.div`
 `;
 
 const StyledNav = styled.nav`
-    display: ${({ $mobileNavActive }) => ($mobileNavActive ? "block" : "none")};
+    visibility: ${({ $mobileNavActive }) => ($mobileNavActive ? "visible" : "hidden")};
+    opacity: ${({ $mobileNavActive }) => ($mobileNavActive ? "1" : "0")};
+    transition: opacity 0.3s ease-in-out;
     gap: 20px;
     position: fixed;
     top: 0;
@@ -45,7 +47,6 @@ const StyledNav = styled.nav`
     height: 100%;
     background-color: #111;
     padding: 80px 20px 20px;
-    transition: transform 0.3s ease;
     transform: ${({ $mobileNavActive }) =>
             $mobileNavActive ? "translateX(0)" : "translateX(100%)"};
 
@@ -88,8 +89,8 @@ const NavButton = styled.button`
     color: #fff;
     cursor: pointer;
     border: none;
-    position: relative;
-    z-index: 9999;  /* <-- Increase to make sure it's visible */
+    position: fixed;
+    z-index: 10001;  /* <-- Increase to make sure it's visible */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -103,7 +104,6 @@ const NavButton = styled.button`
         display: none;
     }
 `;
-
 
 const CartBadge = styled.span`
     background-color: #ff9900; /* Highlight color */
