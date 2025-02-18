@@ -36,9 +36,7 @@ const Wrapper = styled.div`
 `;
 
 const StyledNav = styled.nav`
-    visibility: ${({ $mobileNavActive }) => ($mobileNavActive ? "visible" : "hidden")};
-    opacity: ${({ $mobileNavActive }) => ($mobileNavActive ? "1" : "0")};
-    transition: opacity 0.3s ease-in-out;
+    display: ${({ $mobileNavActive }) => ($mobileNavActive ? "block" : "none")};
     gap: 20px;
     position: fixed;
     top: 0;
@@ -47,6 +45,7 @@ const StyledNav = styled.nav`
     height: 100%;
     background-color: #111;
     padding: 80px 20px 20px;
+    transition: transform 0.3s ease;
     transform: ${({ $mobileNavActive }) =>
             $mobileNavActive ? "translateX(0)" : "translateX(100%)"};
 
