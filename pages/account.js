@@ -7,6 +7,7 @@ import WhiteBox from "@/components/Box";
 import { useEffect, useState } from "react";
 import Input from "@/components/Input";
 import axios from "axios";
+import ProductWhiteBox from "@/components/ProductBox";
 
 const ColsWrapper = styled.div`
     display: grid;
@@ -73,6 +74,12 @@ const CityHolder = styled.div`
     }
 `;
 
+const WishedProductGrid = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+`;
+
 const ActionButton = styled(Button)`
     margin-top: 20px;
     padding: 14px 28px;
@@ -103,22 +110,22 @@ const Divider = styled.hr`
 `;
 
 export default function AccountPage() {
-    console.log("Rendering Account Page");
-
     const { data: session, status } = useSession();
     const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
     const [addressLine1, setAddressLine1] = useState("");
     const [addressLine2, setAddressLine2] = useState("");
     const [number, setNumber] = useState("");
     const [city, setCity] = useState("");
     const [country, setCountry] = useState("");
     const [postalCode, setPostalCode] = useState("");
-    const [loaded, setLoaded] = useState(false);
-    const [isNewUser, setIsNewUser] = useState(false);
+    const [addressLoaded, setAddressLoaded] = useState(false);
+    const [wishlistLoaded, setWishlistLoaded] = useState(false);
+    const [wishedProduct, setWishedProduct] = useState([]);
 
     async function logout() {
         await signOut({ callbackUrl: process.env.NEXT_PUBLIC_URL });
+        setWishedProduct([]);
+        setWishlistLoaded(false);
     }
 
     async function login() {
@@ -126,8 +133,10 @@ export default function AccountPage() {
     }
 
     function saveAddress() {
-        const data = { name, email, city, postalCode, addressLine1, addressLine2, number ,country };
-        axios.put("/api/address", data);
+        const data = { name, email: session.user.email, city, postalCode, addressLine1, addressLine2, number, country };
+        axios.put("/api/address", data)
+            .then(() => console.log("Address saved successfully"))
+            .catch((error) => console.error("Error saving address:", error));
     }
 
     useEffect(() => {
@@ -135,15 +144,10 @@ export default function AccountPage() {
             console.log("Session is null, user might not be logged in.");
             return;
         }
-        console.log("Session data:", session);
-        setEmail(session.user.email);
-        setName(session.user.name);
 
-        axios
-            .get("/api/address")
+        axios.get("/api/address")
             .then((response) => {
                 if (response.data && Object.keys(response.data).length > 0) {
-                    console.log("Fetched address:", response.data);
                     setName(response.data.name || "");
                     setAddressLine1(response.data.addressLine1 || "");
                     setAddressLine2(response.data.addressLine2 || "");
@@ -151,29 +155,36 @@ export default function AccountPage() {
                     setCity(response.data.city || "");
                     setCountry(response.data.country || "");
                     setPostalCode(response.data.postalCode || "");
-                    setIsNewUser(false);
                 } else {
-                    console.log("No existing data found. Creating new user profile.");
-                    setIsNewUser(true);
                     axios.put("/api/address", {
                         name: session.user.name || "",
                         email: session.user.email,
                         city: "",
-                        number:"",
+                        number: "",
                         postalCode: "",
                         addressLine1: "",
                         addressLine2: "",
                         country: "",
-                    });
+                    }).catch((error) => console.error("Error creating new user profile:", error));
                 }
-                setLoaded(true);
+                setAddressLoaded(true);
             })
             .catch((error) => {
                 console.error("Error fetching address:", error);
-                setIsNewUser(true);
-                setLoaded(true);
+                setAddressLoaded(true);
             });
+
+        axios.get("/api/wishlist")
+            .then((response) => {
+                setWishedProduct(response.data.map(wp => wp.product));
+                setWishlistLoaded(true);
+            })
+            .catch((error) => console.error("Error fetching wishlist:", error));
     }, [session]);
+
+    function handleProductRemoval(idToRemove) {
+        setWishedProduct((products) => products.filter(p => p._id.toString() !== idToRemove));
+    }
 
     return (
         <>
@@ -182,45 +193,59 @@ export default function AccountPage() {
                 <ColsWrapper>
                     <StyledWhiteBox>
                         <h2>Wishlist</h2>
-                        <p>Your saved products will appear here. Keep shopping and save your favorites!</p>
+                        {session ? (
+                            wishlistLoaded ? (
+                                <WishedProductGrid>
+                                    {wishedProduct.length > 0 ? (
+                                        wishedProduct.map(wp => (
+                                            <ProductWhiteBox key={wp._id} {...wp} wished={true}
+                                                             onRemoveFromWishlist={handleProductRemoval} />
+                                        ))
+                                    ) : (
+                                        <p>Your saved products will appear here. Keep shopping and save your favorites!</p>
+                                    )}
+                                </WishedProductGrid>
+                            ) : (
+                                <p>Loading wishlist...</p>
+                            )
+                        ) : (
+                            <p>Please log in to view and manage your wishlist.</p>
+                        )}
                     </StyledWhiteBox>
                     <StyledWhiteBox>
-                        <h2>Account Details</h2>
-                        {status === "loading" ? (
-                            <p>Loading...</p>
+                        <h2>{session ? 'Account Details' : 'Login'}</h2>
+                        {session ? (
+                            status === "loading" ? (
+                                <p>Loading...</p>
+                            ) : (
+                                <>
+                                    <StyledInput type="text" placeholder="Name" value={name}
+                                                 onChange={(e) => setName(e.target.value)} />
+                                    <StyledInput type="email" placeholder="Email" value={session?.user?.email || ""}
+                                                 readOnly />
+                                    <StyledInput type="text" placeholder="Address Line 1" value={addressLine1}
+                                                 onChange={(e) => setAddressLine1(e.target.value)} />
+                                    <StyledInput type="text" placeholder="Address Line 2" value={addressLine2}
+                                                 onChange={(e) => setAddressLine2(e.target.value)} />
+                                    <StyledInput type="text" placeholder="WhatsApp number" value={number}
+                                                 onChange={(e) => setNumber(e.target.value)} />
+                                    <CityHolder>
+                                        <StyledInput type="text" placeholder="City" value={city}
+                                                     onChange={(e) => setCity(e.target.value)} />
+                                        <StyledInput type="text" placeholder="Postal Code" value={postalCode}
+                                                     onChange={(e) => setPostalCode(e.target.value)} />
+                                    </CityHolder>
+                                    <StyledInput type="text" placeholder="Country" value={country}
+                                                 onChange={(e) => setCountry(e.target.value)} />
+                                    <ActionButton onClick={saveAddress}>Save</ActionButton>
+                                    <Divider />
+                                    <p>Welcome! <strong>{session.user.name}</strong></p>
+                                    <Button primary={true} onClick={logout}>Logout</Button>
+                                </>
+                            )
                         ) : (
                             <>
-                                <StyledInput type="text" placeholder="Name" value={name}
-                                             onChange={(e) => setName(e.target.value)}/>
-                                <StyledInput type="email" placeholder="Email" value={email}
-                                             onChange={(e) => setEmail(e.target.value)}/>
-                                <StyledInput type="text" placeholder="Address Line 1" value={addressLine1}
-                                             onChange={(e) => setAddressLine1(e.target.value)}/>
-                                <StyledInput type="text" placeholder="Address Line 2" value={addressLine2}
-                                             onChange={(e) => setAddressLine2(e.target.value)}/>
-                                <StyledInput type="text" placeholder="WhatsApp number" value={number}
-                                             onChange={(e) => setNumber(e.target.value)}/>
-                                <CityHolder>
-                                    <StyledInput type="text" placeholder="City" value={city}
-                                                 onChange={(e) => setCity(e.target.value)}/>
-                                    <StyledInput type="text" placeholder="Postal Code" value={postalCode}
-                                                 onChange={(e) => setPostalCode(e.target.value)}/>
-                                </CityHolder>
-                                <StyledInput type="text" placeholder="Country" value={country}
-                                             onChange={(e) => setCountry(e.target.value)}/>
-                                <ActionButton onClick={saveAddress}>Save</ActionButton>
-                                <Divider/>
-                                { session ?(
-                                    <>
-                                        <p>Welcome! <strong>{session.user.name}</strong></p>
-                                        <Button primary={true} onClick={logout}>Logout</Button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <p>Please log in to view and update your account details.</p>
-                                        <Button primary={true} onClick={login}>Login with Google</Button>
-                                    </>
-                                )}
+                                <Button primary={true} onClick={login}>Login with Google</Button>
                             </>
                         )}
                     </StyledWhiteBox>

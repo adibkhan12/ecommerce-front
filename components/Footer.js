@@ -5,6 +5,7 @@ import Image from "next/image";
 const FooterWrapper = styled.footer`
   background-color: #111;
   color: white;
+  margin-top: 220px;
   padding: 40px 20px;
   display: flex;
   flex-wrap: wrap;

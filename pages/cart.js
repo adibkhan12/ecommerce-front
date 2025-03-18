@@ -24,10 +24,18 @@ const Box = styled.div`
     background: #fff;
     border-radius: 12px;
     padding: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease-in-out;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
     &:hover {
-        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+        transform: translateY(-8px);
+        box-shadow: 8px 8px 25px rgba(0, 0, 0, 0.2), -8px -8px 25px rgba(255, 255, 255, 0.9);
+    }
+
+    p {
+        color: #555;
+        font-size: 1rem;
+        line-height: 1.6;
     }
 `;
 
@@ -73,7 +81,14 @@ const CityHolder = styled.div`
 `;
 
 const FormBox = styled(Box)`
-    margin-top: 30px;
+    margin-top: 0;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+        transform: translateY(-8px);
+        box-shadow: 8px 8px 25px rgba(0, 0, 0, 0.2), -8px -8px 25px rgba(255, 255, 255, 0.9);
+    }
 `;
 
 const Heading = styled.h2`
@@ -100,6 +115,7 @@ const StyledInput = styled(Input)`
         box-shadow: 0 0 8px rgba(255, 153, 0, 0.3);
         outline: none;
     }
+   
 `;
 
 const SuccessMessage = styled.div`
@@ -275,7 +291,7 @@ export default function CartPage({_id}) {
                 <ColumnWrapper>
                     <Box>
                         <Heading>Cart</Heading>
-                        {!cartProducts?.length && <div>Your cart is empty</div>}
+                        {!cartProducts?.length && <div><p>Your cart is empty</p></div>}
                         {products?.length > 0 && (
                             <Table>
                                 <thead>
