@@ -142,7 +142,8 @@ const SideIcons = styled.div`
 `;
 
 export default function Header() {
-    const { cartProducts } = useContext(CartContext);
+    const { cart } = useContext(CartContext);
+    const cartItemCount = cart && cart.items ? cart.items.length : 0;
     const [mobileNavActive, setMobileNavActive] = useState(false);
 
     return (
@@ -156,7 +157,7 @@ export default function Header() {
                         <NavLink href="/categories">Categories</NavLink>
                         <NavLink href="/account">Account</NavLink>
                         <NavLink href="/cart">
-                            Cart <CartBadge>{cartProducts.length}</CartBadge>
+                            Cart <CartBadge>{cartItemCount}</CartBadge>
                         </NavLink>
                     </StyledNav>
                     <SideIcons>

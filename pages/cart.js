@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import styled from "styled-components";
 import Center from "@/components/Center";
@@ -19,17 +20,18 @@ const ColumnWrapper = styled.div`
     }
 `;
 
-
 const Box = styled.div`
     background: #fff;
     border-radius: 12px;
     padding: 30px;
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.8);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1),
+    -5px -5px 15px rgba(255, 255, 255, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
         transform: translateY(-8px);
-        box-shadow: 8px 8px 25px rgba(0, 0, 0, 0.2), -8px -8px 25px rgba(255, 255, 255, 0.9);
+        box-shadow: 8px 8px 25px rgba(0, 0, 0, 0.2),
+        -8px -8px 25px rgba(255, 255, 255, 0.9);
     }
 
     p {
@@ -53,15 +55,14 @@ const ProductImageBox = styled.div`
     justify-content: center;
     border-radius: 12px;
     overflow: hidden;
-    background: white; /* Ensures better visibility */
+    background: white;
 
     img {
         max-width: 100%;
         max-height: 100%;
-        object-fit: contain; /* Ensures the image is fully visible without cropping */
+        object-fit: contain;
     }
 `;
-
 
 const QuantityLabel = styled.span`
     padding: 0 12px;
@@ -82,12 +83,14 @@ const CityHolder = styled.div`
 
 const FormBox = styled(Box)`
     margin-top: 0;
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1), -5px -5px 15px rgba(255, 255, 255, 0.8);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1),
+    -5px -5px 15px rgba(255, 255, 255, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
         transform: translateY(-8px);
-        box-shadow: 8px 8px 25px rgba(0, 0, 0, 0.2), -8px -8px 25px rgba(255, 255, 255, 0.9);
+        box-shadow: 8px 8px 25px rgba(0, 0, 0, 0.2),
+        -8px -8px 25px rgba(255, 255, 255, 0.9);
     }
 `;
 
@@ -115,7 +118,6 @@ const StyledInput = styled(Input)`
         box-shadow: 0 0 8px rgba(255, 153, 0, 0.3);
         outline: none;
     }
-   
 `;
 
 const SuccessMessage = styled.div`
@@ -147,7 +149,7 @@ const ModernButton = styled(Button)`
     @media screen and (min-width: 768px) {
         font-size: 1.1rem;
         padding: 8px 20px;
-        border-radius: 6px;  // Less curve, more rectangular
+        border-radius: 6px;
         background: transparent;
         color: black;
         border: none;
@@ -164,8 +166,9 @@ const ModernButton = styled(Button)`
     }
 `;
 
-export default function CartPage({_id}) {
-    const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
+export default function CartPage({ _id }) {
+    // Use "cart" from context rather than the old "cartProducts".
+    const { cart, addProduct, removeProduct, clearCart } = useContext(CartContext);
     const [products, setProducts] = useState([]);
     const [email, setEmail] = useState("");
     const [city, setCity] = useState("");
@@ -181,15 +184,27 @@ export default function CartPage({_id}) {
         setIsClient(true);
     }, []);
 
+    // Fetch product details only for products that have been added (quantity > 0)
     useEffect(() => {
-        if (cartProducts.length > 0) {
-            axios.post("/api/cart", { ids: cartProducts }).then((response) => {
-                setProducts(response.data);
-            });
+        if (cart.items && cart.items.length > 0) {
+            const ids = cart.items.map(item => item.product);
+            axios.post("/api/products", { ids })
+                .then((response) => {
+                    const fetchedProducts = response.data;
+                    // Filter out products that have zero quantity
+                    const filteredProducts = fetchedProducts.filter(product => {
+                        const cartItem = cart.items.find(item => String(item.product) === String(product._id));
+                        return cartItem && cartItem.quantity > 0;
+                    });
+                    setProducts(filteredProducts);
+                })
+                .catch((error) => {
+                    console.error("Error fetching product details", error);
+                });
         } else {
             setProducts([]);
         }
-    }, [cartProducts]);
+    }, [cart]);
 
     useEffect(() => {
         if (isClient && window.location.href.includes("success")) {
@@ -208,14 +223,12 @@ export default function CartPage({_id}) {
             })
             .catch((error) => {
                 if (error.response && error.response.status === 401) {
-                    // User is not logged in, so don't block the cart
                     console.warn("User not logged in. Proceeding without address details.");
                 } else {
                     console.error("Error fetching address:", error);
                 }
             });
     }, [isClient]);
-
 
     function moreOfThisProduct(id) {
         addProduct(id);
@@ -246,7 +259,8 @@ export default function CartPage({_id}) {
                 addressLine2,
                 number,
                 country,
-                cartProducts,
+                // Pass the cart items to the order
+                cartItems: cart.items,
                 paymentMethod: "COD",
             });
 
@@ -261,11 +275,14 @@ export default function CartPage({_id}) {
         }
     }
 
+    // Compute total based on the filtered products and cart quantities.
     let total = 0;
-    for (const productId of cartProducts) {
-        const price = products.find((p) => p._id === productId)?.price || 0;
-        total += price;
-    }
+    products.forEach(product => {
+        const cartItem = cart.items.find(item => String(item.product) === String(product._id));
+        if (cartItem) {
+            total += (cartItem.quantity * product.price);
+        }
+    });
 
     if (isClient && window.location.href.includes("success")) {
         return (
@@ -275,7 +292,9 @@ export default function CartPage({_id}) {
                     <ColumnWrapper>
                         <Box>
                             <h1>Order Placed Successful</h1>
-                            <SuccessMessage>Soon you will get confirmation message via email or WhatsApp</SuccessMessage>
+                            <SuccessMessage>
+                                Soon you will get confirmation message via email or WhatsApp
+                            </SuccessMessage>
                             <p>THANK YOU FOR SHOPPING WITH US!</p>
                         </Box>
                     </ColumnWrapper>
@@ -291,8 +310,10 @@ export default function CartPage({_id}) {
                 <ColumnWrapper>
                     <Box>
                         <Heading>Cart</Heading>
-                        {!cartProducts?.length && <div><p>Your cart is empty</p></div>}
-                        {products?.length > 0 && (
+                        {(!cart.items || cart.items.length === 0) && (
+                            <div><p>Your cart is empty</p></div>
+                        )}
+                        {products.length > 0 && (
                             <Table>
                                 <thead>
                                 <tr>
@@ -302,34 +323,36 @@ export default function CartPage({_id}) {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {products.map((product) => (
-                                    <tr key={product._id}>
-                                        <ProductInfoCell>
-                                            <ProductImageBox>
-                                                <Image
-                                                    src={product.images[0]}
-                                                    alt={product.title}
-                                                    width={140} // Set a fixed width
-                                                    height={140} // Set a fixed height
-                                                    style={{ objectFit: "contain" }} // Ensures full visibility
-                                                />
-                                            </ProductImageBox>
-                                            {product.title}
-                                        </ProductInfoCell>
-                                        <td>
-                                            <ModernButton onClick={() => lessOfThisProduct(product._id)}>-</ModernButton>
-                                            <QuantityLabel>
-                                                {cartProducts.filter((id) => id === product._id).length}
-                                            </QuantityLabel>
-                                            <ModernButton onClick={() => moreOfThisProduct(product._id)}>+</ModernButton>
-                                        </td>
-                                        <td>
-                                            {cartProducts.filter((id) => id === product._id).length *
-                                                product.price}{" "}
-                                            AED
-                                        </td>
-                                    </tr>
-                                ))}
+                                {products.map((product) => {
+                                    const cartItem = cart.items.find(
+                                        (item) => String(item.product) === String(product._id)
+                                    );
+                                    const quantity = cartItem ? cartItem.quantity : 0;
+                                    return (
+                                        <tr key={product._id}>
+                                            <ProductInfoCell>
+                                                <ProductImageBox>
+                                                    <Image
+                                                        src={product.images[0]}
+                                                        alt={product.title}
+                                                        width={140}
+                                                        height={140}
+                                                        style={{ objectFit: "contain" }}
+                                                    />
+                                                </ProductImageBox>
+                                                {product.title}
+                                            </ProductInfoCell>
+                                            <td>
+                                                <ModernButton onClick={() => lessOfThisProduct(product._id)}>-</ModernButton>
+                                                <QuantityLabel>{quantity}</QuantityLabel>
+                                                <ModernButton onClick={() => moreOfThisProduct(product._id)}>+</ModernButton>
+                                            </td>
+                                            <td>
+                                                {quantity * product.price} AED
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                                 <tr>
                                     <td></td>
                                     <td></td>
@@ -339,7 +362,7 @@ export default function CartPage({_id}) {
                             </Table>
                         )}
                     </Box>
-                    {!!cartProducts?.length > 0 && (
+                    {cart.items && cart.items.length > 0 && (
                         <FormBox>
                             <Heading>Order Information</Heading>
                             <StyledInput

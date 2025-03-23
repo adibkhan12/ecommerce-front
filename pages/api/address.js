@@ -5,7 +5,13 @@ import {Address} from "@/models/Address";
 
 export default async function handle(req, res){
     await mongooseConnect();
-    const {user} = await getServerSession(req, res, authOptions);
+    const session = await getServerSession(req, res, authOptions);
+    const user = session?.user;
+
+    // If no user is logged in, return an empty array
+    if (!user) {
+        return res.status(200).json([]);
+    }
 
     if (req.method === "PUT"){
         const address = await Address.findOne({userEmail: user.email});
