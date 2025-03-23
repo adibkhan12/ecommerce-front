@@ -143,7 +143,10 @@ const SideIcons = styled.div`
 
 export default function Header() {
     const { cart } = useContext(CartContext);
-    const cartItemCount = cart && cart.items ? cart.items.length : 0;
+    const cartItemCount =
+        cart && cart.items
+            ? cart.items.reduce((total, item) => total + item.quantity, 0)
+            : 0;
     const [mobileNavActive, setMobileNavActive] = useState(false);
 
     return (

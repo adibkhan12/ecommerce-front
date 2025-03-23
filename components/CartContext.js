@@ -80,13 +80,21 @@ export function CartContextProvider({ children }) {
     }
 
     const removeProduct = async (productId) => {
-        const newCart = {
-            ...cart,
-            items: cart.items.filter(item => String(item.product) !== String(productId)),
-            updatedAt: new Date()
-        };
-        setCart(newCart);
-        await updateCart(newCart);
+        const index = cart.items.findIndex(item => String(item.product) === String(productId));
+        if (index !== -1) {
+            const currentItem = cart.items[index];
+            let newItems;
+            if (currentItem.quantity > 1) {
+                newItems = cart.items.map((item, i) =>
+                    i === index ? { ...item, quantity: item.quantity - 1 } : item
+                );
+            } else {
+                newItems = cart.items.filter((item, i) => i !== index);
+            }
+            const newCart = { ...cart, items: newItems, updatedAt: new Date() };
+            setCart(newCart);
+            await updateCart(newCart);
+        }
     };
 
     const clearCart = async () => {
