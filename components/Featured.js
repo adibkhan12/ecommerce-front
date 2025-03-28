@@ -4,8 +4,6 @@ import ButtonLink from "@/components/ButtonLink";
 import CartIcon from "@/components/icons/CartIcon";
 import {RevealWrapper} from "next-reveal";
 import Button from "@/components/Button";
-
-import {FlyingButton} from 'react-flying-item'
 import {useContext} from "react";
 import {CartContext} from "@/components/CartContext";
 

@@ -1,5 +1,6 @@
-import { QuickLinks } from '@/models/quicklinks';
+
 import {mongooseConnect} from "@/lib/mongoose";
+import {QuickLinks} from "@/models/QuickLinks";
 
 export default async function handler(req, res) {
   try {
