@@ -7,7 +7,8 @@ import HeartSolidIcon from "@/components/icons/HeartSolidIcon";
 import HeartOutlineIcon from "@/components/icons/HeartOutlineIcon";
 import axios from "axios";
 
-const ProductWrapper= styled.div`
+
+const ProductWrapper = styled.div`
 `;
 
 const WhiteBox = styled(Link)`
@@ -89,6 +90,7 @@ const WishListButton= styled.button`
         height: 20px;
     }
 `;
+
 
 export default function ProductWhiteBox({
     _id,title, description,price,images,wished: initialWished,

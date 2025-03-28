@@ -101,12 +101,12 @@ export default function Footer() {
                 </ContactInfo>
             </Section>
 
-            {/* Center Section - Links & Payment */}
+            {/* Center Section - Quick Links & Payment */}
             <Section>
                 <h4>QUICK LINKS</h4>
                 <QuickLinks>
                     <li><Link href="/about">About Us</Link></li>
-                    <li><Link href="/terms">Terms & Conditions</Link></li>
+                    <li><Link href="/terms">Terms &amp; Conditions</Link></li>
                     <li><Link href="/shop">Shop</Link></li>
                     <li><Link href="/support">Support</Link></li>
                 </QuickLinks>

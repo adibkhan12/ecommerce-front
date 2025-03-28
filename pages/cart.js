@@ -9,6 +9,7 @@ import axios from "axios";
 import Table from "@/components/Table";
 import Input from "@/components/Input";
 import Image from "next/image";
+import {RevealWrapper} from "next-reveal";
 
 const ColumnWrapper = styled.div`
     display: grid;
@@ -125,6 +126,11 @@ const SuccessMessage = styled.div`
     text-align: center;
     color: #28a745;
     margin-top: 20px;
+`;
+
+const ClearCartWrapper = styled.div`
+    margin-top: 20px;
+    text-align: right;
 `;
 
 const ModernButton = styled(Button)`
@@ -308,128 +314,145 @@ export default function CartPage({ _id }) {
             <Header />
             <Center>
                 <ColumnWrapper>
-                    <Box>
-                        <Heading>Cart</Heading>
-                        {(!cart.items || cart.items.length === 0) && (
-                            <div><p>Your cart is empty</p></div>
-                        )}
-                        {products.length > 0 && (
-                            <Table>
-                                <thead>
-                                <tr>
-                                    <th>Products</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {products.map((product) => {
-                                    const cartItem = cart.items.find(
-                                        (item) => String(item.product) === String(product._id)
-                                    );
-                                    const quantity = cartItem ? cartItem.quantity : 0;
-                                    return (
-                                        <tr key={product._id}>
-                                            <ProductInfoCell>
-                                                <ProductImageBox>
-                                                    <Image
-                                                        src={product.images[0]}
-                                                        alt={product.title}
-                                                        width={140}
-                                                        height={140}
-                                                        style={{ objectFit: "contain" }}
-                                                    />
-                                                </ProductImageBox>
-                                                {product.title}
-                                            </ProductInfoCell>
-                                            <td>
-                                                <ModernButton onClick={() => lessOfThisProduct(product._id)}>-</ModernButton>
-                                                <QuantityLabel>{quantity}</QuantityLabel>
-                                                <ModernButton onClick={() => moreOfThisProduct(product._id)}>+</ModernButton>
-                                            </td>
-                                            <td>
-                                                {quantity * product.price} AED
-                                            </td>
+                    <RevealWrapper origin={'left'} duration={800} distance='30px'>
+                        <Box>
+                            <Heading>Cart</Heading>
+                            {(!cart.items || cart.items.length === 0) && (
+                                <div><p>Your cart is empty</p></div>
+                            )}
+                            {products.length > 0 && (
+                                <div>
+                                    <Table>
+                                        <thead>
+                                        <tr>
+                                            <th>Products</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
                                         </tr>
-                                    );
-                                })}
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td>AED {total}</td>
-                                </tr>
-                                </tbody>
-                            </Table>
+                                        </thead>
+                                        <tbody>
+                                        {products.map((product,index) => {
+                                            const cartItem = cart.items.find(
+                                                (item) => String(item.product) === String(product._id)
+                                            );
+                                            const quantity = cartItem ? cartItem.quantity : 0;
+                                            return (
+                                                <tr key={product._id}>
+                                                    <RevealWrapper
+                                                        delay={index*100}
+                                                        origin={'left'}
+                                                        duration={800}
+                                                        distance='30px'
+                                                    >
+                                                        <ProductInfoCell>
+                                                            <ProductImageBox>
+                                                                <Image
+                                                                    src={product.images[0]}
+                                                                    alt={product.title}
+                                                                    width={140}
+                                                                    height={140}
+                                                                    style={{ objectFit: "contain" }}
+                                                                />
+                                                            </ProductImageBox>
+                                                            {product.title}
+                                                        </ProductInfoCell>
+                                                    </RevealWrapper>
+                                                        <td>
+                                                            <ModernButton onClick={() => lessOfThisProduct(product._id)}>-</ModernButton>
+                                                            <QuantityLabel>{quantity}</QuantityLabel>
+                                                            <ModernButton onClick={() => moreOfThisProduct(product._id)}>+</ModernButton>
+                                                        </td>
+                                                <td>
+                                                    {quantity * product.price} AED
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>AED {total}</td>
+                                    </tr>
+                                    </tbody>
+                                </Table>
+                                <ClearCartWrapper>
+                                    <ModernButton onClick={clearCart}>Clear Cart</ModernButton>
+                                </ClearCartWrapper>
+                            </div>
                         )}
                     </Box>
-                    {cart.items && cart.items.length > 0 && (
-                        <FormBox>
-                            <Heading>Order Information</Heading>
-                            <StyledInput
-                                type="text"
-                                placeholder="Name"
-                                value={name}
-                                name="name"
-                                onChange={(ev) => setName(ev.target.value)}
-                            />
-                            <StyledInput
-                                type="email"
-                                placeholder="Email"
-                                value={email}
-                                name="email"
-                                onChange={(ev) => setEmail(ev.target.value)}
-                            />
-                            <StyledInput
-                                type="text"
-                                placeholder="Address line 1"
-                                value={addressLine1}
-                                name="addressLine1"
-                                onChange={(ev) => setAddressLine1(ev.target.value)}
-                            />
-                            <StyledInput
-                                type="text"
-                                placeholder="Address line 2"
-                                value={addressLine2}
-                                name="addressLine2"
-                                onChange={(ev) => setAddressLine2(ev.target.value)}
-                            />
-                            <StyledInput
-                                type="text"
-                                placeholder="WhatsApp number"
-                                value={number}
-                                name="number"
-                                onChange={(ev) => setNumber(ev.target.value)}
-                            />
-                            <CityHolder>
-                                <StyledInput
-                                    type="text"
-                                    placeholder="City"
-                                    value={city}
-                                    name="city"
-                                    onChange={(ev) => setCity(ev.target.value)}
-                                />
-                                <StyledInput
-                                    type="text"
-                                    placeholder="Postal Code"
-                                    value={postalCode}
-                                    name="postalCode"
-                                    onChange={(ev) => setPostalCode(ev.target.value)}
-                                />
-                            </CityHolder>
-                            <StyledInput
-                                type="text"
-                                placeholder="Country"
-                                value={country}
-                                name="country"
-                                onChange={(ev) => setCountry(ev.target.value)}
-                            />
-                            <ModernButton block black onClick={placeOrderCOD}>
-                                Place Order (COD)
-                            </ModernButton>
-                        </FormBox>
-                    )}
-                </ColumnWrapper>
-            </Center>
-        </>
-    );
+                </RevealWrapper>
+        {cart.items && cart.items.length > 0 && (
+            <RevealWrapper>
+                <FormBox>
+                    <Heading>Order Information</Heading>
+                    <StyledInput
+                        type="text"
+                        placeholder="Name"
+                        value={name}
+                        name="name"
+                        onChange={(ev) => setName(ev.target.value)}
+                    />
+                    <StyledInput
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        name="email"
+                        onChange={(ev) => setEmail(ev.target.value)}
+                    />
+                    <StyledInput
+                        type="text"
+                        placeholder="Address line 1"
+                        value={addressLine1}
+                        name="addressLine1"
+                        onChange={(ev) => setAddressLine1(ev.target.value)}
+                    />
+                    <StyledInput
+                        type="text"
+                        placeholder="Address line 2"
+                        value={addressLine2}
+                        name="addressLine2"
+                        onChange={(ev) => setAddressLine2(ev.target.value)}
+                    />
+                    <StyledInput
+                        type="text"
+                        placeholder="WhatsApp number"
+                        value={number}
+                        name="number"
+                        onChange={(ev) => setNumber(ev.target.value)}
+                    />
+                    <CityHolder>
+                        <StyledInput
+                            type="text"
+                            placeholder="City"
+                            value={city}
+                            name="city"
+                            onChange={(ev) => setCity(ev.target.value)}
+                        />
+                        <StyledInput
+                            type="text"
+                            placeholder="Postal Code"
+                            value={postalCode}
+                            name="postalCode"
+                            onChange={(ev) => setPostalCode(ev.target.value)}
+                        />
+                    </CityHolder>
+                    <StyledInput
+                        type="text"
+                        placeholder="Country"
+                        value={country}
+                        name="country"
+                        onChange={(ev) => setCountry(ev.target.value)}
+                    />
+                    <ModernButton block black onClick={placeOrderCOD}>
+                        Place Order (COD)
+                    </ModernButton>
+                </FormBox>
+            </RevealWrapper>
+
+        )}
+        </ColumnWrapper>
+</Center>
+</>
+);
 }

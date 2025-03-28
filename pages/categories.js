@@ -9,6 +9,7 @@ import Link from "next/link";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {WishedProduct} from "@/models/WishedProduct";
+import {RevealWrapper} from "next-reveal";
 
 // Styled Components
 const CategoryWrapper = styled.div`
@@ -114,14 +115,18 @@ export default function CategoriesPage({ mainCategories, categoriesProducts, wis
                             </ShowAllLink>
                         </ShowAllLinkWrapper>
                         <ProductsGrid>
-                            {categoriesProducts[cat._id]?.map((p) => (
-                                <StyledProductWrapper key={p._id}>
-                                    <ProductWhiteBox {...p} wished={wishedProducts.includes(p._id)} />
-                                </StyledProductWrapper>
+                            {categoriesProducts[cat._id]?.map((p,index) => (
+                                <RevealWrapper key={p._id} delay={index*50}>
+                                    <StyledProductWrapper key={p._id}>
+                                        <ProductWhiteBox {...p} wished={wishedProducts.includes(p._id)} />
+                                    </StyledProductWrapper>
+                                </RevealWrapper>
                             ))}
-                            <ShowAllSquare href={'/category/'+cat._id}>
-                                Show All Products &rarr;
-                            </ShowAllSquare>
+                            <RevealWrapper origin={'right'} delay={categoriesProducts[cat._id].length*50}>
+                                <ShowAllSquare href={'/category/'+cat._id}>
+                                    Show All Products &rarr;
+                                </ShowAllSquare>
+                            </RevealWrapper>
                         </ProductsGrid>
                     </CategoryWrapper>
                 ))}

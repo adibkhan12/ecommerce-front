@@ -1,8 +1,11 @@
 import Center from "@/components/Center";
 import styled from "styled-components";
-import Button from "@/components/Button";
 import ButtonLink from "@/components/ButtonLink";
 import CartIcon from "@/components/icons/CartIcon";
+import {RevealWrapper} from "next-reveal";
+import Button from "@/components/Button";
+
+import {FlyingButton} from 'react-flying-item'
 import {useContext} from "react";
 import {CartContext} from "@/components/CartContext";
 
@@ -121,21 +124,26 @@ export default function Featured({product}){
                 <ColumnWrapper>
                     <Column>
                         <div>
-                            <Title>{product.title}</Title>
-                            <Desc>
-                                <TruncatedDesc text={product.description} maxWords={30} productId={product._id} />
-                            </Desc>
-                            <ButtonWrapper>
-                                <ButtonLink href = {'/product/'+product._id} outline={1} white={1}>Read More</ButtonLink>
-                                <Button white="true" onClick={addFeaturedToCart}>
-                                    <CartIcon />
-                                    Add to Cart
-                                </Button>
-                            </ButtonWrapper>
+                            <RevealWrapper origin={'left'}>
+                                <Title>{product.title}</Title>
+                                <Desc>
+                                    <TruncatedDesc text={product.description} maxWords={30} productId={product._id} />
+                                </Desc>
+                                <ButtonWrapper>
+                                    <ButtonLink href = {'/product/'+product._id} outline={1} white={1}>Read More</ButtonLink>
+                                    <ButtonLink href = {'/product/'+product._id} outline={1} white={1}>Read More</ButtonLink>
+                                    <Button white="true" onClick={addFeaturedToCart}>
+                                        <CartIcon />
+                                        Add to Cart
+                                    </Button>
+                                </ButtonWrapper>
+                            </RevealWrapper>
                         </div>
                     </Column>
                     <ImgColumn>
-                        <img src={product.images?.[0]} alt={product.title}/>
+                        <RevealWrapper>
+                            <img src={product.images?.[0]} alt={product.title}/>
+                        </RevealWrapper>
                     </ImgColumn>
                 </ColumnWrapper>
             </Center>
