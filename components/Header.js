@@ -2,6 +2,7 @@ import Link from "next/link";
 import styled from "styled-components";
 import Center from "@/components/Center";
 import { useContext, useState } from "react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { CartContext } from "@/components/CartContext";
 import BarsIcon from "@/components/icons/Bars";
 import SearchIcon from "@/components/icons/SearchIcons";
@@ -141,6 +142,33 @@ const SideIcons = styled.div`
     }
 `;
 
+// Stylish Auth Button
+const AuthButton = styled.button`
+    margin-left: 20px;
+    padding: 10px 22px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 30px;
+    background: linear-gradient(90deg, #888888, #555555);
+    color: #fff;
+    border: none;
+    box-shadow: 0 5px 15px rgba(136, 136, 136, 0.3);
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(85, 85, 85, 0.5);
+        background: linear-gradient(90deg, #555555, #888888);
+    }
+
+    &:active {
+        transform: scale(0.97);
+        box-shadow: 0 4px 8px rgba(136, 136, 136, 0.35);
+    }
+    
+`;
+
 export default function Header() {
     const { cart } = useContext(CartContext);
     const cartItemCount =
@@ -148,6 +176,18 @@ export default function Header() {
             ? cart.items.reduce((total, item) => total + item.quantity, 0)
             : 0;
     const [mobileNavActive, setMobileNavActive] = useState(false);
+    
+    // Auth
+    const { data: session, status } = useSession();
+
+    // Handlers
+    async function handleSignIn() {
+        await signIn("google");
+    }
+
+    async function handleSignOut() {
+        await signOut({ callbackUrl: process.env.NEXT_PUBLIC_URL });
+    }
 
     return (
         <StyledHeader>
@@ -165,6 +205,18 @@ export default function Header() {
                     </StyledNav>
                     <SideIcons>
                         <Link href={'/search'} className="size-6"><SearchIcon/></Link>
+                        {/* On desktop, show auth button in side icons */}
+                        {status === "loading" ? (
+                            <AuthButton style={{ opacity: 0.7 }}>Loading...</AuthButton>
+                        ) : !session ? (
+                            <AuthButton onClick={handleSignIn}>
+                                Sign up / Sign in
+                            </AuthButton>
+                        ) : (
+                            <AuthButton onClick={handleSignOut}>
+                                Logout
+                            </AuthButton>
+                        )}
                         <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
                             <BarsIcon />
                         </NavButton>
