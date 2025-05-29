@@ -1,8 +1,10 @@
+
 import Link from "next/link";
 import styled from "styled-components";
 import Center from "@/components/Center";
 import { useContext, useState } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { CartContext } from "@/components/CartContext";
 import BarsIcon from "@/components/icons/Bars";
 import SearchIcon from "@/components/icons/SearchIcons";
@@ -13,17 +15,19 @@ const StyledHeader = styled.header`
     position: sticky;
     top: 0;
     z-index: 10;
+    padding: 10px 0;
 `;
 
 const Logo = styled(Link)`
     color: #fff;
     text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.6rem;
+    font-weight: 700;
     position: relative;
     z-index: 3;
     &:hover {
-        color: #ff9900; /* Amazon-like hover color */
+        color: #ff9900;
+        transition: color 0.2s ease;
     }
 `;
 
@@ -31,7 +35,7 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 10px 20px;
     max-width: 1200px;
     margin: 0 auto;
 `;
@@ -46,9 +50,11 @@ const StyledNav = styled.nav`
     height: 100%;
     background-color: #111;
     padding: 80px 20px 20px;
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
     transform: ${({ $mobileNavActive }) =>
             $mobileNavActive ? "translateX(0)" : "translateX(100%)"};
+    box-shadow: ${({ $mobileNavActive }) => 
+            $mobileNavActive ? "-5px 0 15px rgba(0,0,0,0.2)" : "none"};
 
     @media screen and (min-width: 768px) {
         display: flex;
@@ -58,33 +64,74 @@ const StyledNav = styled.nav`
         padding: 0;
         transform: translateX(0);
         background-color: transparent;
+        box-shadow: none;
     }
 `;
 
 const NavLink = styled(Link)`
     display: block;
-    color: #ddd;
+    color: #eee;
     text-decoration: none;
-    font-size: 1rem;
-    padding: 10px 0;
+    font-size: 1.1rem;
+    padding: 12px 0;
     transition: color 0.3s ease;
+    font-weight: 500;
 
     svg{
         height: 20px;
     }
     &:hover {
-        color: #ff9900; /* Amazon-like hover color */
+        color: #ff9900;
     }
 
     @media screen and (min-width: 768px) {
         padding: 0;
+        margin: 0 15px;
+    }
+`;
+
+const NavButtonLink = styled.button`
+    display: block;
+    background: #e0e0e0;
+    border: none;
+    color: #222;
+    font-size: 1rem;
+    padding: 10px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+        background: #d0d0d0;
+        color: #000;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(1px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    @media screen and (min-width: 768px) {
         margin: 0 10px;
+        padding: 8px 18px;
+        display: inline-block;
     }
 `;
 
 const NavButton = styled.button`
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     background-color: transparent;
     color: #fff;
     cursor: pointer;
@@ -93,14 +140,22 @@ const NavButton = styled.button`
     justify-content: center;
     align-items: center;
     font-size: 1.2rem;
-    margin-left: 10px; /* Add spacing between search icon & hamburger */
+    margin-left: 10px;
+    position: relative;
+    z-index: 10;
+    transition: transform 0.2s ease;
 
-    position: relative; /* Changed from fixed to relative to avoid overlap */
-    z-index: 10; /* Lowered from 10001 to prevent unintended overlaps */
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
 
     svg {
         stroke: white;
-        width: 26px; /* Standardized width */
+        width: 26px;
         height: 26px;
     }
 
@@ -110,16 +165,16 @@ const NavButton = styled.button`
 `;
 
 const CartBadge = styled.span`
-    background-color: #ff9900; /* Highlight color */
+    background-color: #ff9900;
     color: #fff;
-    font-size: 0.8rem; /* Slightly larger for better readability */
+    font-size: 0.8rem;
     font-weight: bold;
-    padding: 3px 8px; /* More padding for a rounded, pill-like look */
-    border-radius: 12px; /* Pill shape */
+    padding: 3px 8px;
+    border-radius: 12px;
     margin-left: 5px;
     vertical-align: middle;
     display: inline-block;
-    min-width: 20px; /* Ensures consistent size for single-digit and multi-digit numbers */
+    min-width: 20px;
     text-align: center;
     line-height: 1;
 `;
@@ -127,46 +182,26 @@ const CartBadge = styled.span`
 const SideIcons = styled.div`
     display: flex;
     align-items: center;
-    gap: 20px; /* Increased spacing to avoid overlap */
+    gap: 20px;
 
     a {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         min-width: 24px;
         color: white;
+        transition: transform 0.2s ease;
+        
+        &:hover {
+            transform: scale(1.1);
+            color: #ff9900;
+        }
 
         svg {
-            padding-top: 3px;
-            width: 22px; /* Standardized width */
+            width: 22px;
             height: 22px;
         }
     }
-`;
-
-// Stylish Auth Button
-const AuthButton = styled.button`
-    margin-left: 20px;
-    padding: 10px 22px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    border-radius: 30px;
-    background: linear-gradient(90deg, #888888, #555555);
-    color: #fff;
-    border: none;
-    box-shadow: 0 5px 15px rgba(136, 136, 136, 0.3);
-    cursor: pointer;
-    transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(85, 85, 85, 0.5);
-        background: linear-gradient(90deg, #555555, #888888);
-    }
-
-    &:active {
-        transform: scale(0.97);
-        box-shadow: 0 4px 8px rgba(136, 136, 136, 0.35);
-    }
-    
 `;
 
 export default function Header() {
@@ -176,17 +211,24 @@ export default function Header() {
             ? cart.items.reduce((total, item) => total + item.quantity, 0)
             : 0;
     const [mobileNavActive, setMobileNavActive] = useState(false);
-    
+
     // Auth
     const { data: session, status } = useSession();
+    const router = useRouter();
 
     // Handlers
-    async function handleSignIn() {
-        await signIn("google");
+    function handleSignIn() {
+        router.push("/signin");
+        setMobileNavActive(false);
     }
 
     async function handleSignOut() {
-        await signOut({ callbackUrl: process.env.NEXT_PUBLIC_URL });
+        try {
+            await signOut({ callbackUrl: process.env.NEXT_PUBLIC_URL });
+            setMobileNavActive(false);
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
     }
 
     return (
@@ -200,24 +242,27 @@ export default function Header() {
                         <NavLink href="/categories">Categories</NavLink>
                         <NavLink href="/account">Account</NavLink>
                         <NavLink href="/cart">
-                            Cart <CartBadge>{cartItemCount}</CartBadge>
+                            Cart {cartItemCount > 0 && <CartBadge>{cartItemCount}</CartBadge>}
                         </NavLink>
+                        {/* Auth options in nav as grey button */}
+                        {status === "loading" ? (
+                            <NavButtonLink disabled>Loading...</NavButtonLink>
+                        ) : !session ? (
+                            <NavButtonLink onClick={handleSignIn}>
+                                Sign in
+                            </NavButtonLink>
+                        ) : (
+                            <NavButtonLink onClick={handleSignOut}>
+                                Sign out
+                            </NavButtonLink>
+                        )}
                     </StyledNav>
                     <SideIcons>
-                        <Link href={'/search'} className="size-6"><SearchIcon/></Link>
-                        {/* On desktop, show auth button in side icons */}
-                        {status === "loading" ? (
-                            <AuthButton style={{ opacity: 0.7 }}>Loading...</AuthButton>
-                        ) : !session ? (
-                            <AuthButton onClick={handleSignIn}>
-                                Sign up / Sign in
-                            </AuthButton>
-                        ) : (
-                            <AuthButton onClick={handleSignOut}>
-                                Logout
-                            </AuthButton>
-                        )}
-                        <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
+                        <Link href={'/search'} aria-label="Search"><SearchIcon/></Link>
+                        <NavButton 
+                            onClick={() => setMobileNavActive((prev) => !prev)}
+                            aria-label={mobileNavActive ? "Close menu" : "Open menu"}
+                        >
                             <BarsIcon />
                         </NavButton>
                     </SideIcons>

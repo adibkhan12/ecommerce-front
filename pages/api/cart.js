@@ -18,9 +18,11 @@ export default async function handler(req, res) {
         identifier = req.method === "GET" ? req.query.identifier : req.body.identifier;
     }
 
-    if (!identifier) {
-        return res.status(400).json({ error: "Identifier is required." });
+    // Stronger check: ensure identifier is a non-empty string
+    if (!identifier || typeof identifier !== "string" || !identifier.trim()) {
+        return res.status(400).json({ error: "Valid identifier is required (user email or guest id)." });
     }
+    identifier = identifier.trim();
 
     // Handle GET request – fetch and return the cart.
     if (req.method === "GET") {

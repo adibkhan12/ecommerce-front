@@ -245,7 +245,7 @@ export default function AccountPage() {
                             )
                         ) : (
                             <>
-                                <Button primary={true} onClick={login}>Login with Google</Button>
+                                <Button primary={true} onClick={login}>Login</Button>
                             </>
                         )}
                     </StyledWhiteBox>
