@@ -68,12 +68,8 @@ const CategoryTitle = styled.h2`
 
 const ProductsGrid = styled.div`
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 14px;
-    @media (min-width: 500px) {
-        grid-template-columns: 1fr 1fr;
-        gap: 18px;
-    }
     @media (min-width: 900px) {
         grid-template-columns: repeat(4, 1fr);
         gap: 24px;
