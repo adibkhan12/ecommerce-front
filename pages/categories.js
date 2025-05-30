@@ -14,16 +14,13 @@ import { motion } from "framer-motion";
 
 // Styled Components
 const PageBackground = styled.div`
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    min-height: 100vh;
-    width: 100vw;
-    box-sizing: border-box;
-    padding: 0;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  z-index: -1;
 `;
 
 const CategoryWrapper = styled.section`
