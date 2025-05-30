@@ -111,6 +111,45 @@ const QuickLinks = styled.ul`
   }
 `;
 
+const SocialIconsContainer = styled.div`
+  display: flex;
+  gap: 16px; /* Adjust as needed */
+  margin-top: 12px; /* Reduce this value to decrease the gap after 'Follow us' */
+`;
+
+// Example: Update the logo box style
+const SocialIconBox = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: #f5f5f5;
+  border-radius: 12px; /* Rounded rectangle instead of circle */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s;
+  svg {
+    transition: color 0.2s, fill 0.2s;
+    color: #232526;
+    fill: currentColor;
+  }
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+  &.twitter:hover svg {
+    color: #1da1f2;
+  }
+  &.instagram:hover svg {
+    color: #e1306c;
+  }
+  &.facebook:hover svg {
+    color: #1877f3;
+  }
+  &.tiktok:hover svg {
+    color: #FE2C55;
+  }
+`;
+
 const Countries = styled.div`
 margin-top: 10px;
   display: flex;
@@ -130,7 +169,7 @@ const Divider = styled.div`
   width: 100%;
   height: 1px;
   background: linear-gradient(90deg, #232526 0%, #ff9900 50%, #232526 100%);
-  margin: 32px 0 16px 0;
+  // margin: 32px 0 16px 0;
   opacity: 0.3;
 `;
 
@@ -145,14 +184,14 @@ const Copyright = styled.div`
 
 export default function Footer() {
     return (
-        <FooterWrapper>
+        <FooterWrapper id="contactinfo">
                   {/* Left Section - Contact */}
-                  <Section>
+                  <Section >
                     <Logo>
                       <span className="emoji" role="img" aria-label="mobile">📱</span>
                       Shahzad Arshad
                     </Logo>
-                <ContactInfo>
+                <ContactInfo >
           <ContactRow>
             <span className="emoji" role="img" aria-label="shop">🏬</span>
             Shahzad Arshad Elect tr
@@ -163,7 +202,7 @@ export default function Footer() {
           </ContactRow>
           <ContactRow>
             <span className="emoji" role="img" aria-label="phone">📞</span>
-            <a href="tel:566130458" >566-130-458</a>
+            <a href="tel:566130458" >+971-56-6130458</a>
           </ContactRow>
           <ContactRow>
             <span className="emoji" role="img" aria-label="email">✉️</span>
@@ -176,7 +215,13 @@ export default function Footer() {
         <QuickLinks>
           <li>
             <span className="emoji" role="img" aria-label="about">ℹ️</span>
-            <Link href="/about">About Us</Link>
+            <a href="#contactinfo" onClick={e => {
+              e.preventDefault();
+              const el = document.getElementById('contactinfo');
+              if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}>About Us</a>
           </li>
           <li>
             <span className="emoji" role="img" aria-label="terms">📄</span>
@@ -191,6 +236,31 @@ export default function Footer() {
             <Link href="/support">Support</Link>
           </li>
         </QuickLinks>
+            </Section>
+            <Section>
+                <SectionTitle>Follow Us</SectionTitle>
+                <SocialIconsContainer>
+                <SocialIconBox className="twitter" href="https://twitter.com/yourprofile" target="_blank" rel="noopener noreferrer">
+                  <svg width={24} height={24} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-label="Twitter">
+                    <path d="M22.46 5.924c-.793.352-1.645.59-2.54.698a4.48 4.48 0 0 0 1.965-2.475 8.94 8.94 0 0 1-2.828 1.082A4.48 4.48 0 0 0 16.11 4c-2.485 0-4.5 2.014-4.5 4.5 0 .353.04.697.116 1.027C7.728 9.37 4.1 7.6 1.67 4.905a4.48 4.48 0 0 0-.61 2.264c0 1.563.796 2.942 2.008 3.75a4.48 4.48 0 0 1-2.037-.563v.057c0 2.183 1.553 4.004 3.617 4.42a4.48 4.48 0 0 1-2.03.077c.573 1.788 2.24 3.09 4.215 3.125A8.98 8.98 0 0 1 2 19.54a12.68 12.68 0 0 0 6.88 2.017c8.26 0 12.78-6.84 12.78-12.77 0-.195-.004-.39-.013-.583A9.22 9.22 0 0 0 24 4.59a8.93 8.93 0 0 1-2.54.698z"/>
+                  </svg>
+                </SocialIconBox>
+                <SocialIconBox className="instagram" href="https://instagram.com/yourprofile" target="_blank" rel="noopener noreferrer">
+                  <svg width={24} height={24} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-label="Instagram">
+                    <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 3.25a5.25 5.25 0 1 1 0 10.5 5.25 5.25 0 0 1 0-10.5zm0 1.5a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm5.13.62a1.13 1.13 0 1 1-2.26 0 1.13 1.13 0 0 1 2.26 0z"/>
+                  </svg>
+                </SocialIconBox>
+                <SocialIconBox className="facebook" href="https://facebook.com/yourprofile" target="_blank" rel="noopener noreferrer">
+                  <svg width={24} height={24} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-label="Facebook">
+                    <path d="M22.675 0h-21.35C.595 0 0 .592 0 1.326v21.348C0 23.408.595 24 1.325 24h11.495v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.797.143v3.24l-1.918.001c-1.504 0-1.797.715-1.797 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116C23.406 24 24 23.408 24 22.674V1.326C24 .592 23.406 0 22.675 0"/>
+                  </svg>
+                </SocialIconBox>
+                <SocialIconBox className="tiktok" href="https://tiktok.com/@yourprofile" target="_blank" rel="noopener noreferrer">
+                  <svg width={24} height={24} viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-label="TikTok">
+                    <path d="M41.5 16.5c-3.6 0-6.5-2.9-6.5-6.5V6h-7v28.5c0 2.2-1.8 4-4 4s-4-1.8-4-4 1.8-4 4-4c.5 0 1 .1 1.5.3V26.2c-.5-.1-1-.2-1.5-.2-5 0-9 4-9 9s4 9 9 9 9-4 9-9V22.7c2 1.2 4.3 1.8 6.5 1.8v-8z"/>
+                  </svg>
+                </SocialIconBox>  
+              </SocialIconsContainer>
             </Section>
             <Section>
                 <h4>COUNTRIES WE SHIP TO</h4>

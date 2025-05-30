@@ -1,23 +1,14 @@
-import { mongooseConnect } from '@/lib/mongoose';
-import { QuickLinks } from '@/models/QuickLinks';
 import Header from "@/components/Header";
 
-export async function getServerSideProps() {
-  await mongooseConnect();
-  const quicklinks = await QuickLinks.findOne();
-  if (!quicklinks) return { notFound: true };
-  return { props: { description: quicklinks.support.description } };
-}
-
-export default function Support({ description }) {
+export default function Support() {
+  const description = "Support information goes here.";
   return (
-      <>
-          <Header/>
-          <div style={{padding: "2rem"}}>
-              <h1>Support</h1>
-              <p>{description}</p>
-          </div>
-      </>
-
+    <>
+      <Header/>
+      <div style={{padding: "2rem"}}>
+        <h1>Support</h1>
+        <p>{description}</p>
+      </div>
+    </>
   );
 }
