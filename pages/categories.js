@@ -17,43 +17,66 @@ const PageBackground = styled.div`
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
   width: 100%;
+  padding: 0 0 40px 0;
 `;
 
 const CategoryWrapper = styled.section`
-    margin: 32px auto;
-    padding: 32px 18px 28px 18px;
-    border-radius: 18px;
+    margin: 14px auto;
+    padding: 12px 4px 18px 4px;
+    border-radius: 14px;
     background: #fff;
-    box-shadow: 0 6px 24px rgba(44,62,80,0.08);
-    max-width: 1200px;
+    box-shadow: 0 2px 12px rgba(44,62,80,0.07);
+    max-width: 100vw;
+    width: 100%;
+    @media (min-width: 600px) {
+        padding: 20px 10px 24px 10px;
+        max-width: 700px;
+    }
+    @media (min-width: 1024px) {
+        max-width: 1200px;
+        padding: 32px 24px 32px 24px;
+    }
 `;
 
 const CategoryTitle = styled.h2`
-    font-size: 2.1rem;
+    font-size: 1.2rem;
     color: #222;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     text-align: center;
     font-weight: 800;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 8px;
+    line-height: 1.2;
     
     &::before {
         content: "📂";
+        font-size: 1.1rem;
+        margin-right: 6px;
+    }
+    @media (min-width: 600px) {
         font-size: 1.5rem;
-        margin-right: 8px;
+        gap: 12px;
+        &::before { font-size: 1.3rem; }
+    }
+    @media (min-width: 1024px) {
+        font-size: 2.1rem;
     }
 `;
 
 const ProductsGrid = styled.div`
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-
-    @media screen and (min-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    @media (min-width: 500px) {
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+    @media (min-width: 900px) {
         grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
     }
 `;
 
@@ -87,6 +110,10 @@ const StyledProductWrapper = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    width: 100%;
+    @media (max-width: 500px) {
+        padding: 0 2px;
+    }
 `;
 
 const ShowAllSquare = styled(Link)`
