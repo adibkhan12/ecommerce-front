@@ -107,8 +107,12 @@ const StyledProductWrapper = styled.div`
     align-items: center;
     flex-direction: column;
     width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
     @media (max-width: 500px) {
-        padding: 0 2px;
+        padding: 0;
+        margin: 0;
     }
 `;
 
