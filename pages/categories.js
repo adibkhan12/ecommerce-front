@@ -16,7 +16,14 @@ import { motion } from "framer-motion";
 const PageBackground = styled.div`
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
-    padding: 30px 0 60px 0;
+    width: 100vw;
+    box-sizing: border-box;
+    padding: 0;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
 `;
 
 const CategoryWrapper = styled.section`
