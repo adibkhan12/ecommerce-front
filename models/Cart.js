@@ -7,7 +7,7 @@ const CartItemSchema = new Schema({
 }, { _id: false });
 
 const CartSchema = new Schema({
-    userEmail: { type: String, unique: true, required: true },
+    identifier: { type: String, unique: true, required: true },
     items: { type: [CartItemSchema], default: [] },
     updatedAt: { type: Date, default: Date.now }
 });

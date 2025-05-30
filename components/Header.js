@@ -211,7 +211,7 @@ export default function Header() {
             ? cart.items.reduce((total, item) => total + item.quantity, 0)
             : 0;
     const [mobileNavActive, setMobileNavActive] = useState(false);
-
+    
     // Auth
     const { data: session, status } = useSession();
     const router = useRouter();

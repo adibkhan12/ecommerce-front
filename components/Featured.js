@@ -2,7 +2,8 @@ import Center from "@/components/Center";
 import styled from "styled-components";
 import ButtonLink from "@/components/ButtonLink";
 import CartIcon from "@/components/icons/CartIcon";
-import {RevealWrapper} from "next-reveal";
+import { motion } from "framer-motion";
+// import {RevealWrapper} from "next-reveal";
 import Button from "@/components/Button";
 import {useContext} from "react";
 import {CartContext} from "@/components/CartContext";
@@ -131,7 +132,11 @@ export default function Featured({product}){
                 <ColumnWrapper>
                     <Column>
                         <div>
-                            <RevealWrapper origin={'left'}>
+                            <motion.div
+                                initial={{ opacity: 0, x: -30 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.7 }}
+                            >
                                 <Title>{product.title}</Title>
                                 <Desc>
                                     <TruncatedDesc text={product.description} maxWords={30} productId={product._id} />
@@ -143,13 +148,17 @@ export default function Featured({product}){
                                         Add to Cart
                                     </Button>
                                 </ButtonWrapper>
-                            </RevealWrapper>
+                            </motion.div>
                         </div>
                     </Column>
                     <ImgColumn>
-                        <RevealWrapper>
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7 }}
+                        >
                             <img src={product.images?.[0]} alt={product.title}/>
-                        </RevealWrapper>
+                        </motion.div>
                     </ImgColumn>
                 </ColumnWrapper>
             </Center>

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import ProductBox from "@/components/ProductBox";
-import {RevealWrapper} from "next-reveal";
+import { motion } from "framer-motion";
+// import {RevealWrapper} from "next-reveal";
 
 const StyledProductsGrid = styled.div`
     display: grid;
@@ -15,11 +16,16 @@ export default function ProductsGrid({products, wishedProducts = []}) {
     return (
         <StyledProductsGrid>
             {products?.length > 0 && products.map((product, index) => (
-                <RevealWrapper key={product._id} delay={index * 50}>
+                <motion.div
+                    key={product._id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.07, duration: 0.5 }}
+                >
                     <ProductBox {...product}
-                                wished={wishedProducts?.includes(product._id)}
+                        wished={wishedProducts?.includes(product._id)}
                     />
-                </RevealWrapper>
+                </motion.div>
             ))}
         </StyledProductsGrid>
     );

@@ -9,7 +9,8 @@ import axios from "axios";
 import Table from "@/components/Table";
 import Input from "@/components/Input";
 import Image from "next/image";
-import {RevealWrapper} from "next-reveal";
+import { motion } from "framer-motion";
+// import {RevealWrapper} from "next-reveal";
 
 const ColumnWrapper = styled.div`
     display: grid;
@@ -266,7 +267,7 @@ export default function CartPage({ _id }) {
                 number,
                 country,
                 // Pass the cart items to the order
-                cartItems: cart.items,
+                cartProducts: cart.items,
                 paymentMethod: "COD",
             });
 
@@ -314,7 +315,11 @@ export default function CartPage({ _id }) {
             <Header />
             <Center>
                 <ColumnWrapper>
-                    <RevealWrapper origin={'left'} duration={800} distance='30px'>
+                    <motion.div
+                        initial={{ opacity: 0, x: -30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
                         <Box>
                             <Heading>Cart</Heading>
                             {(!cart.items || cart.items.length === 0) && (
@@ -346,53 +351,55 @@ export default function CartPage({ _id }) {
                                             );
                                             const quantity = cartItem ? cartItem.quantity : 0;
                                             return (
-                                                <tr key={product._id}>
-                                                    <RevealWrapper
-                                                        delay={index*100}
-                                                        origin={'left'}
-                                                        duration={800}
-                                                        distance='30px'
-                                                    >
-                                                        <ProductInfoCell>
-                                                            <ProductImageBox>
-                                                                <Image
-                                                                    src={product.images[0]}
-                                                                    alt={product.title}
-                                                                    width={140}
-                                                                    height={140}
-                                                                    style={{ objectFit: "contain" }}
-                                                                />
-                                                            </ProductImageBox>
-                                                            {product.title}
-                                                        </ProductInfoCell>
-                                                    </RevealWrapper>
-                                                        <td>
-                                                            <ModernButton onClick={() => lessOfThisProduct(product._id)}>-</ModernButton>
-                                                            <QuantityLabel>{quantity}</QuantityLabel>
-                                                            <ModernButton onClick={() => moreOfThisProduct(product._id)}>+</ModernButton>
-                                                        </td>
-                                                <td>
-                                                    {quantity * product.price} AED
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td>AED {total}</td>
-                                    </tr>
-                                    </tbody>
-                                </Table>
-                                <ClearCartWrapper>
-                                    <ModernButton onClick={clearCart}>Clear Cart</ModernButton>
-                                </ClearCartWrapper>
-                            </div>
-                        )}
-                    </Box>
-                </RevealWrapper>
+                                                <motion.tr
+                                                    key={product._id}
+                                                    initial={{ opacity: 0, x: -30 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: index * 0.1, duration: 0.8 }}
+                                                >
+                                                    <ProductInfoCell>
+                                                        <ProductImageBox>
+                                                            <Image
+                                                                src={product.images[0]}
+                                                                alt={product.title}
+                                                                width={140}
+                                                                height={140}
+                                                                style={{ objectFit: "contain" }}
+                                                            />
+                                                        </ProductImageBox>
+                                                        {product.title}
+                                                    </ProductInfoCell>
+                                                    <td>
+                                                        <ModernButton onClick={() => lessOfThisProduct(product._id)}>-</ModernButton>
+                                                        <QuantityLabel>{quantity}</QuantityLabel>
+                                                        <ModernButton onClick={() => moreOfThisProduct(product._id)}>+</ModernButton>
+                                                    </td>
+                                                    <td>
+                                                        {quantity * product.price} AED
+                                                    </td>
+                                                </motion.tr>
+                                            );
+                                        })}
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td>AED {total}</td>
+                                        </tr>
+                                        </tbody>
+                                    </Table>
+                                    <ClearCartWrapper>
+                                        <ModernButton onClick={clearCart}>Clear Cart</ModernButton>
+                                    </ClearCartWrapper>
+                                </div>
+                            )}
+                        </Box>
+                    </motion.div>
         {cart.items && cart.items.length > 0 && (
-            <RevealWrapper>
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+            >
                 <FormBox>
                     <Heading>Order Information</Heading>
                     <StyledInput
@@ -457,7 +464,7 @@ export default function CartPage({ _id }) {
                         Place Order (COD)
                     </ModernButton>
                 </FormBox>
-            </RevealWrapper>
+            </motion.div>
 
         )}
         </ColumnWrapper>

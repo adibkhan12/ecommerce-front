@@ -9,32 +9,48 @@ import Link from "next/link";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {WishedProduct} from "@/models/WishedProduct";
-import {RevealWrapper} from "next-reveal";
+import { motion } from "framer-motion";
+// import {RevealWrapper} from "next-reveal";
 
 // Styled Components
-const CategoryWrapper = styled.div`
-    margin-bottom: 20px;
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+const PageBackground = styled.div`
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding: 30px 0 60px 0;
+`;
+
+const CategoryWrapper = styled.section`
+    margin: 32px auto;
+    padding: 32px 18px 28px 18px;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 6px 24px rgba(44,62,80,0.08);
+    max-width: 1200px;
 `;
 
 const CategoryTitle = styled.h2`
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 20px;
+    font-size: 2.1rem;
+    color: #222;
+    margin-bottom: 18px;
     text-align: center;
-    background: linear-gradient(to right, #4caf50, #81c784);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    
+    &::before {
+        content: "📂";
+        font-size: 1.5rem;
+        margin-right: 8px;
+    }
 `;
 
 const ProductsGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 24px;
 
     @media screen and (min-width: 768px) {
         grid-template-columns: repeat(4, 1fr);
@@ -47,18 +63,22 @@ const ShowAllLinkWrapper = styled.div`
 `;
 
 const ShowAllLink = styled(Link)`
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #fff;
     text-decoration: none;
-    background-color: #4caf50;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-weight: bold;
+    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-weight: 700;
     display: inline-block;
-    transition: background-color 0.3s;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    transition: background 0.3s, transform 0.2s;
 
     &:hover {
-        background-color: #388e3c;
+        background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+        transform: translateY(-2px) scale(1.04);
     }
 `;
 
@@ -103,7 +123,7 @@ const ShowAllSquare = styled(Link)`
 // Main Component
 export default function CategoriesPage({ mainCategories, categoriesProducts, wishedProducts=[] }) {
     return (
-        <>
+        <PageBackground>
             <Header />
             <Center>
                 {mainCategories.map((cat) => (
@@ -116,22 +136,22 @@ export default function CategoriesPage({ mainCategories, categoriesProducts, wis
                         </ShowAllLinkWrapper>
                         <ProductsGrid>
                             {categoriesProducts[cat._id]?.map((p,index) => (
-                                <RevealWrapper key={p._id} delay={index*50}>
-                                    <StyledProductWrapper key={p._id}>
+                                <motion.div
+                                    key={p._id}
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.07, duration: 0.5 }}
+                                >
+                                    <StyledProductWrapper>
                                         <ProductWhiteBox {...p} wished={wishedProducts.includes(p._id)} />
                                     </StyledProductWrapper>
-                                </RevealWrapper>
+                                </motion.div>
                             ))}
-                            <RevealWrapper origin={'right'} delay={categoriesProducts[cat._id].length*50}>
-                                <ShowAllSquare href={'/category/'+cat._id}>
-                                    Show All Products &rarr;
-                                </ShowAllSquare>
-                            </RevealWrapper>
                         </ProductsGrid>
                     </CategoryWrapper>
                 ))}
             </Center>
-        </>
+        </PageBackground>
     );
 }
 
@@ -151,7 +171,7 @@ export async function getServerSideProps(ctx) {
         const products = await Product.find(
             { category: categoriesIds },
             null,
-            { limit: 3, sort: { _id: -1 } }
+            { limit: 4, sort: { _id: -1 } }
         );
         allFetchedProductsId.push(...products.map(p => p._id.toString()));
         categoriesProducts[mainCat._id] = products;

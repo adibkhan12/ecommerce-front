@@ -12,15 +12,15 @@ import styled from "styled-components";
 import Button from "@/components/Button";
 
 const ColsWrapper = styled.div`
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 40px;
-    margin: 40px 0;
-
-    @media screen and (min-width: 768px) {
-        grid-template-columns: 0.8fr 1.2fr;
-        align-items: start;
-    }
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  margin: 40px 0;
+  @media screen and (min-width: 900px) {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 48px;
+  }
 `;
 
 const PriceRow = styled.div`
@@ -49,24 +49,31 @@ const Price = styled.span`
 `;
 
 const ProductDetails = styled.div`
-    background: #f8f8f8;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-    @media screen and (min-width: 768px) {
-        padding: 30px;
-    }
+  background: #fff;
+  border-radius: 18px;
+  padding: 36px 32px 32px 32px;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.10);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 320px;
+  @media screen and (max-width: 900px) {
+    min-width: 0;
+    padding: 24px 10px 18px 10px;
+  }
 `;
 
 const ProductDescription = styled.p`
-    color: #555;
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-top: 15px;
-
+    color: #444;
+    font-size: 1.13rem;
+    line-height: 1.7;
+    margin: 18px 0 0 0;
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 18px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     @media screen and (min-width: 768px) {
-        font-size: 1.2rem;
+        font-size: 1.18rem;
     }
 `;
 
@@ -131,21 +138,50 @@ export default function ProductPage({ product }) {
                         <ProductImages images={product.images} />
                     </ImageBox>
                     <ProductDetails>
-                        <Title>{product.title}</Title>
+                        <Title style={{
+                          fontSize: '2.5rem',
+                          fontWeight: 800,
+                          color: '#222',
+                          marginBottom: 8,
+                          letterSpacing: '0.5px',
+                          background: 'linear-gradient(90deg, #ff9900 0%, #ff4500 100%)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                        }}>{product.title}</Title>
                         {product.properties && (
-                            <div>
+                            <div style={{ margin: '10px 0 18px 0', display: 'flex', flexWrap: 'wrap', gap: '10px 14px' }}>
                                 {Object.entries(product.properties).map(([key, value]) => (
-                                    <p key={key}>
-                                        <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong> {value}
-                                    </p>
+                                    <span key={key} style={{
+                                        display: 'inline-block',
+                                        background: 'linear-gradient(90deg, #ffe0b2 0%, #fff3e0 100%)',
+                                        color: '#ff4500',
+                                        borderRadius: '20px',
+                                        padding: '6px 16px',
+                                        fontWeight: 600,
+                                        fontSize: '1.01rem',
+                                        boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+                                        letterSpacing: '0.2px',
+                                    }}>
+                                        {key.charAt(0).toUpperCase() + key.slice(1)}: {value}
+                                    </span>
                                 ))}
                             </div>
                         )}
+                        <hr style={{ border: 0, borderTop: '1.5px solid #f0f0f0', margin: '18px 0 0 0' }} />
                         <ProductDescription dangerouslySetInnerHTML={{ __html: product.description.replace(/\n/g, '<br />') }} />
 
                         <PriceRow>
                             <Price>AED {product.price}</Price>
-                            <StyledButton onClick={() => addProduct(product._id)} primary={1} outline={1}>
+                            <StyledButton onClick={() => addProduct(product._id)} primary={1} outline={1} style={{
+                                minWidth: 180,
+                                fontSize: '1.13rem',
+                                fontWeight: 700,
+                                background: 'linear-gradient(90deg, #ff9900 0%, #ff4500 100%)',
+                                color: '#fff',
+                                border: 'none',
+                                boxShadow: '0 2px 8px rgba(255,153,0,0.10)',
+                                marginTop: 18,
+                            }}>
                                 <CartIcon />
                                 Add to Cart
                             </StyledButton>

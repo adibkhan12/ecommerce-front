@@ -9,13 +9,13 @@ export default async function handler(req, res) {
     const session = await getServerSession(req, res, authOptions);
     let identifier;
 
-    // Determine the identifier from session or from query/body guestId.
-    if (session?.user?.email) {
-        identifier = session.user.email;
+    // Always use identifier from request body for PUT (to match frontend usage), otherwise use session or query param.
+    if (req.method === "PUT") {
+    identifier = req.body.identifier;
+    } else if (session?.user?.email) {
+    identifier = session.user.email;
     } else {
-        // For guest users, expect the identifier to be provided.
-        // GET: from query params; PUT: from request body.
-        identifier = req.method === "GET" ? req.query.identifier : req.body.identifier;
+    identifier = req.query.identifier;
     }
 
     // Stronger check: ensure identifier is a non-empty string
@@ -27,12 +27,12 @@ export default async function handler(req, res) {
     // Handle GET request – fetch and return the cart.
     if (req.method === "GET") {
         try {
-            const cart = await Cart.findOne({ userEmail: identifier });
+            const cart = await Cart.findOne({ identifier });
             if (cart) {
                 return res.status(200).json(cart);
             } else {
                 // If no cart, return an empty cart structure.
-                return res.status(200).json({ userEmail: identifier, items: [], updatedAt: new Date() });
+                return res.status(200).json({ identifier, items: [], updatedAt: new Date() });
             }
         } catch (error) {
             console.error("GET /api/cart error:", error);
@@ -47,11 +47,15 @@ export default async function handler(req, res) {
             if (!newCart) {
                 return res.status(400).json({ error: "Cart data is required." });
             }
+            // Defensive: Prevent upsert if identifier is null/empty (should never happen due to earlier check)
+            if (!identifier || typeof identifier !== "string" || !identifier.trim()) {
+            return res.status(400).json({ error: "Valid identifier is required (user email or guest id)." });
+            }
             // Try to update an existing record.
             const updatedCart = await Cart.findOneAndUpdate(
-                { userEmail: identifier },
-                { ...newCart, userEmail: identifier },
-                { new: true, upsert: true }
+            { identifier },
+            { ...newCart, identifier },
+            { new: true, upsert: true }
             );
             return res.status(200).json(updatedCart);
         } catch (error) {
