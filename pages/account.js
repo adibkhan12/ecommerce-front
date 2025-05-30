@@ -197,10 +197,16 @@ export default function AccountPage() {
                             wishlistLoaded ? (
                                 <WishedProductGrid>
                                     {wishedProduct.length > 0 ? (
-                                        wishedProduct.map(wp => (
-                                            <ProductWhiteBox key={wp._id} {...wp} wished={true}
-                                                             onRemoveFromWishlist={handleProductRemoval} />
-                                        ))
+                                        wishedProduct.map(wp =>
+                                            wp ? (
+                                                <ProductWhiteBox key={wp._id} {...wp} wished={true}
+                                                    onRemoveFromWishlist={handleProductRemoval} />
+                                            ) : (
+                                                <div key={Math.random()} style={{ color: '#888', textAlign: 'center', padding: '20px' }}>
+                                                    This product is no longer available.
+                                                </div>
+                                            )
+                                        )
                                     ) : (
                                         <p>Your saved products will appear here. Keep shopping and save your favorites!</p>
                                     )}

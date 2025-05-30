@@ -332,6 +332,15 @@ export default function CartPage({ _id }) {
                                         </thead>
                                         <tbody>
                                         {products.map((product,index) => {
+                                            if (!product) {
+                                                return (
+                                                    <tr key={Math.random()}>
+                                                        <td colSpan={3} style={{ color: '#888', textAlign: 'center', padding: '20px' }}>
+                                                            This product is no longer available.
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            }
                                             const cartItem = cart.items.find(
                                                 (item) => String(item.product) === String(product._id)
                                             );
