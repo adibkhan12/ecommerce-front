@@ -13,7 +13,11 @@ export default function NewProducts({products, wishedProducts}) {
     return (
         <Center>
             <Title>New Arrivals</Title>
-            <ProductsGrid products={products} wishedProducts={wishedProducts} />
+            {products && products.length > 0 ? (
+                <ProductsGrid products={products} wishedProducts={wishedProducts} />
+            ) : (
+                <div>No new arrivals at the moment.</div>
+            )}
         </Center>
     )
 }

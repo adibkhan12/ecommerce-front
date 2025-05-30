@@ -113,6 +113,15 @@ const TruncatedDesc = ({ text, maxWords, productId }) => {
 
 export default function Featured({product}){
     const {addProduct}=useContext(CartContext)
+    if (!product) {
+        return (
+            <Bg>
+                <Center>
+                    <Title>Sorry, no featured product at the moment.</Title>
+                </Center>
+            </Bg>
+        );
+    }
     function addFeaturedToCart(){
         addProduct(product._id);
     }

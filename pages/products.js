@@ -27,7 +27,11 @@ export default function ProductPage({ products, wishedProducts }) {
                 <Center>
                     <ProductsSection>
                         <Title>All Products</Title>
-                        <ProductsGrid products={products} wishedProducts={wishedProducts} />
+                        {products && products.length > 0 ? (
+                            <ProductsGrid products={products} wishedProducts={wishedProducts} />
+                        ) : (
+                            <div>No products available at the moment.</div>
+                        )}
                     </ProductsSection>
                 </Center>
             </PageWrapper>
