@@ -36,7 +36,7 @@ export async function getServerSideProps(ctx){
         featuredProduct = await Product.findById(featuredProductSetting.value);
     }
 
-    const newProducts = await Product.find({}, null, {sort: {'_id':-1}, limit: 20});
+    const newProducts = await Product.find({}, null, {sort: {'_id':-1}, limit: 12});
 
     const session = await getServerSession(ctx.req, ctx.res, authOptions);
     const userEmail = session?.user?.email || null;
@@ -49,7 +49,7 @@ export async function getServerSideProps(ctx){
     const mainCategories = allCategories.filter(c => !c.parent);
     // For each main category, fetch up to 20 products
     const categoriesWithProducts = await Promise.all(mainCategories.map(async (cat) => {
-      const products = await Product.find({ category: cat._id }, null, { sort: { '_id': -1 }, limit: 20 });
+      const products = await Product.find({ category: cat._id }, null, { sort: { '_id': -1 }, limit: 12 });
       return {
         _id: cat._id.toString(),
         name: cat.name,
