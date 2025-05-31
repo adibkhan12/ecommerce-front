@@ -7,31 +7,13 @@ import HeartSolidIcon from "@/components/icons/HeartSolidIcon";
 import HeartOutlineIcon from "@/components/icons/HeartOutlineIcon";
 import axios from "axios";
 
-
-const ProductWrapper = styled.div`
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  padding: 18px 14px 16px 14px;
-  margin: 0 0 18px 0;
-  transition: box-shadow 0.2s, transform 0.2s;
-  position: relative;
-  min-width: 180px;
-  min-height: 260px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  &:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
-    transform: translateY(-4px) scale(1.02);
-  }
-`;
-
 const WhiteBox = styled(Link)`
   background: linear-gradient(135deg, #f9f9f9 60%, #f3f3f3 100%);
   border-radius: 12px;
-  padding: 18px 8px 10px 8px;
-  min-height: 120px;
+  padding: 12px 2px 8px 2px;
+  min-height: 80px;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -41,50 +23,46 @@ const WhiteBox = styled(Link)`
   transition: box-shadow 0.2s;
   img {
     max-width: 100%;
-    max-height: 90px;
+    max-height: 70px;
     object-fit: contain;
     transition: transform 0.2s;
+    width: 100%;
+    height: auto;
+    display: block;
   }
   &:hover img {
     transform: scale(1.07);
   }
 `;
 
-const Title = styled(Link)`
-  font-weight: 600;
-  font-size: 1.08rem;
-  color: #222;
-  text-decoration: none;
-  margin: 0 0 2px 0;
-  display: block;
-  text-align: left;
-  transition: color 0.2s;
-  &:hover {
-    color: #ff9900;
-  }
-`;
-
-const ProductInfoBox = styled.div`
-  margin-top: 2px;
-  flex: 1 1 auto;
+const ProductWrapper = styled.div`
+  background: linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(44,62,80,0.10);
+  padding: 14px 8px 14px 8px;
+  margin: 0 auto;
+  transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  max-width: 340px;
+  min-height: 200px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-`;
-
-const PriceRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 8px;
-  gap: 8px;
-`;
-
-const Price = styled.div`
-  font-size: 1.13rem;
-  font-weight: 700;
-  color: #ff4500;
-  letter-spacing: 0.5px;
+  align-items: stretch;
+  overflow: hidden;
+  @media (max-width: 600px) {
+    padding: 8px 2px 10px 2px;
+    max-width: 160px;
+    border-radius: 12px;
+    min-height: 170px;
+  }
+  &:hover {
+    box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+    transform: translateY(-4px) scale(1.03);
+    background: linear-gradient(135deg, #f3f8ff 60%, #dbeafe 100%);
+  }
 `;
 
 const WishListButton = styled.button`
@@ -104,6 +82,16 @@ const WishListButton = styled.button`
   transition: box-shadow 0.2s, background 0.2s;
   z-index: 2;
   color: ${({ wished }) => (wished ? 'red' : '#bbb')};
+  @media (max-width: 600px) {
+    width: 24px;
+    height: 24px;
+    top: 2px;
+    right: 2px;
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
   &:hover {
     background: #ffe5d0;
     box-shadow: 0 4px 16px rgba(255,153,0,0.13);
@@ -114,9 +102,86 @@ const WishListButton = styled.button`
   }
 `;
 
+const ProductInfoBox = styled.div`
+  margin-top: 2px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 320px;
+  box-sizing: border-box;
+  min-height: 70px;
+  padding: 0 8px 4px 8px;
+  @media (max-width: 600px) {
+    max-width: 160px;
+    min-height: 60px;
+    padding: 0 6px 2px 6px;
+  }
+`;
 
+const Title = styled(Link)`
+  font-weight: 600;
+  font-size: 1.08rem;
+  color: #222;
+  text-decoration: none;
+  margin: 0 0 2px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  transition: color 0.2s;
+  padding: 0 8px;
+  min-height: 2.3em;
+  line-height: 1.15em;
+  @media (max-width: 600px) {
+    font-size: 0.98rem;
+    padding: 0 6px;
+    min-height: 2.2em;
+  }
+  &:hover {
+    color: #ff9900;
+  }
+`;
+
+const PriceRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 8px;
+  padding: 0 8px;
+  @media (max-width: 600px) {
+    padding: 0 6px;
+  }
+`;
+
+const Price = styled.div`
+  font-size: 1.13rem;
+  font-weight: 700;
+  color: #ff4500;
+  letter-spacing: 0.5px;
+  @media (max-width: 600px) {
+    font-size: 0.95rem;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  min-width: 90px;
+  font-size: 1rem;
+  padding: 10px 16px;
+  border-radius: 8px;
+  @media (max-width: 600px) {
+    font-size: 0.85rem;
+    padding: 6px 8px;
+    min-width: 70px;
+    border-radius: 6px;
+  }
+`;
 export default function ProductWhiteBox({
-    _id, title, price, images, description, arDescription, brand, category, wished: initialWished,
+    _id, title, price, images, wished: initialWished,
     onRemoveFromWishlist = ()=>{},
 }) {
         const {addProduct}=useContext(CartContext)
@@ -151,7 +216,7 @@ export default function ProductWhiteBox({
     return (
         <ProductWrapper>
             <WhiteBox href={url}>
-                <div>
+                <div className="image-container">
                     <WishListButton wished={isWished ? "true" : undefined} onClick={addToWishList}>
                         {isWished ? <HeartSolidIcon/> : <HeartOutlineIcon/>}
                     </WishListButton>
@@ -164,9 +229,9 @@ export default function ProductWhiteBox({
                     <Price>
                         {price} AED
                     </Price>
-                    <Button block onClick={() => addProduct(_id)} primary={1} outline={1} style={{ minWidth: 110 }}>
-                        Add to Cart
-                    </Button>
+                    <StyledButton block onClick={() => addProduct(_id)} primary={1} outline={1}>
+                      Add to Cart
+                    </StyledButton>
                 </PriceRow>
             </ProductInfoBox>
         </ProductWrapper>

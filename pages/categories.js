@@ -40,14 +40,10 @@ const CategoryTitle = styled.h2`
 
 const ProductsGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 14px;
-  @media (min-width: 500px) {
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-  }
-  @media (min-width: 900px) {
-    grid-template-columns: repeat(4, 1fr);
+  @media (min-width: 786px) {
+    grid-template-columns: repeat(4, 2fr);
     gap: 24px;
   }
 `;
@@ -87,37 +83,6 @@ const StyledProductWrapper = styled.div`
   padding: 0;
   margin: 0;
 `;
-
-const ShowAllSquare = styled(Link)`
-    background-color: #f1f1f1; /* Neutral background to distinguish from product cards */
-    max-height: 160px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1rem;
-    color: #4caf50; /* Matches the category title gradient for harmony */
-    font-weight: bold;
-    text-decoration: none;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-
-    &:hover {
-        background-color: #4caf50; /* Highlight the square on hover */
-        color: #fff; /* White text on hover for contrast */
-        transform: scale(1.05); /* Slight zoom for interactivity */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    &:active {
-        transform: scale(0.98); /* Slight press effect */
-    }
-
-    @media screen and (min-width: 768px) {
-        font-size: 1.2rem; /* Slightly larger text for wider screens */
-    }
-`;
-
 
 // Main Component
 export default function CategoriesPage({ mainCategories, categoriesProducts, wishedProducts=[] }) {
