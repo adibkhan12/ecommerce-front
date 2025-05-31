@@ -5,7 +5,7 @@ import CartIcon from "@/components/icons/CartIcon";
 import { motion } from "framer-motion";
 // import {RevealWrapper} from "next-reveal";
 import Button from "@/components/Button";
-import {useContext} from "react";
+import {useContext, useRef} from "react";
 import {CartContext} from "@/components/CartContext";
 
 const Bg = styled.div`
@@ -114,6 +114,7 @@ const TruncatedDesc = ({ text, maxWords, productId }) => {
 
 export default function Featured({product}){
     const {addProduct}=useContext(CartContext)
+    const imgRef = useRef();
     if (!product) {
         return (
             <Bg>
@@ -123,8 +124,43 @@ export default function Featured({product}){
             </Bg>
         );
     }
+    function animateToCart() {
+        const img = imgRef.current;
+        if (!img) return;
+        const imgRect = img.getBoundingClientRect();
+        // Decide destination
+        const isMobile = window.innerWidth < 768;
+        const destElem = document.getElementById(isMobile ? "bars-icon" : "cart-link");
+        if (!destElem) return;
+        const destRect = destElem.getBoundingClientRect();
+        // Create floating image
+        const floatingImg = img.cloneNode(true);
+        floatingImg.style.position = "fixed";
+        floatingImg.style.left = imgRect.left + "px";
+        floatingImg.style.top = imgRect.top + "px";
+        floatingImg.style.width = imgRect.width + "px";
+        floatingImg.style.height = imgRect.height + "px";
+        floatingImg.style.zIndex = 9999;
+        floatingImg.style.pointerEvents = "none";
+        floatingImg.style.transition = "all 0.8s cubic-bezier(.4,1.3,.6,1)";
+        floatingImg.style.opacity = 1;
+        document.body.appendChild(floatingImg);
+        // Force reflow
+        void floatingImg.offsetWidth;
+        // Animate
+        floatingImg.style.left = destRect.left + destRect.width/2 - imgRect.width/4 + "px";
+        floatingImg.style.top = destRect.top + destRect.height/2 - imgRect.height/4 + "px";
+        floatingImg.style.width = imgRect.width/2 + "px";
+        floatingImg.style.height = imgRect.height/2 + "px";
+        floatingImg.style.opacity = 0;
+        // Remove after animation
+        setTimeout(() => {
+            document.body.removeChild(floatingImg);
+        }, 850);
+    }
     function addFeaturedToCart(){
         addProduct(product._id);
+        animateToCart();
     }
     return (
         <Bg>
@@ -143,7 +179,7 @@ export default function Featured({product}){
                                 </Desc>
                                 <ButtonWrapper>
                                     <ButtonLink href = {'/product/'+product._id} outline={1} white={1}>Read More</ButtonLink>
-                                    <Button primary={1} outline={1} _id={product._id} src={product.images?.[0]}>
+                                    <Button primary={1} outline={1} onClick={addFeaturedToCart}>
                                         <CartIcon />
                                         Add to Cart
                                     </Button>
@@ -157,7 +193,7 @@ export default function Featured({product}){
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.7 }}
                         >
-                            <img src={product.images?.[0]} alt={product.title}/>
+                            <img ref={imgRef} src={product.images?.[0]} alt={product.title}/>
                         </motion.div>
                     </ImgColumn>
                 </ColumnWrapper>

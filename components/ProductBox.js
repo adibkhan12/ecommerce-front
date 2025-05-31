@@ -180,13 +180,18 @@ const StyledButton = styled(Button)`
     border-radius: 6px;
   }
 `;
+import { useRef } from "react";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
+
 export default function ProductWhiteBox({
     _id, title, price, images, wished: initialWished,
     onRemoveFromWishlist = ()=>{},
 }) {
-        const {addProduct}=useContext(CartContext)
+    const {addProduct}=useContext(CartContext)
     const url = '/product/'+_id;
     const[isWished,setIsWished] = useState(initialWished);
+    const imgRef = useRef();
     useEffect(() => {
         setIsWished(initialWished);
     }, [initialWished]);
@@ -208,9 +213,58 @@ export default function ProductWhiteBox({
             })
             .catch(err => {
                 console.error("Error adding/removing from wishlist:", err.response?.data || err);
-                alert("You need to log in to modify your wishlist.");
+                Swal.fire({
+                  icon: "info",
+                  title: "Login Required",
+                  text: "You need to log in to modify your wishlist.",
+                  confirmButtonColor: "#ff9900",
+                  background: "#fff",
+                  customClass: {
+                    popup: 'swal2-popup-custom',
+                  }
+                });
                 setIsWished(prev => !prev); // Revert state on error
             });
+    }
+
+    function animateToCart() {
+        const img = imgRef.current;
+        if (!img) return;
+        const imgRect = img.getBoundingClientRect();
+        // Decide destination
+        const isMobile = window.innerWidth < 768;
+        const destElem = document.getElementById(isMobile ? "bars-icon" : "cart-link");
+        if (!destElem) return;
+        const destRect = destElem.getBoundingClientRect();
+        // Create floating image
+        const floatingImg = img.cloneNode(true);
+        floatingImg.style.position = "fixed";
+        floatingImg.style.left = imgRect.left + "px";
+        floatingImg.style.top = imgRect.top + "px";
+        floatingImg.style.width = imgRect.width + "px";
+        floatingImg.style.height = imgRect.height + "px";
+        floatingImg.style.zIndex = 9999;
+        floatingImg.style.pointerEvents = "none";
+        floatingImg.style.transition = "all 0.8s cubic-bezier(.4,1.3,.6,1)";
+        floatingImg.style.opacity = 1;
+        document.body.appendChild(floatingImg);
+        // Force reflow
+        void floatingImg.offsetWidth;
+        // Animate
+        floatingImg.style.left = destRect.left + destRect.width/2 - imgRect.width/4 + "px";
+        floatingImg.style.top = destRect.top + destRect.height/2 - imgRect.height/4 + "px";
+        floatingImg.style.width = imgRect.width/2 + "px";
+        floatingImg.style.height = imgRect.height/2 + "px";
+        floatingImg.style.opacity = 0;
+        // Remove after animation
+        setTimeout(() => {
+            document.body.removeChild(floatingImg);
+        }, 850);
+    }
+
+    function handleAddToCart() {
+        addProduct(_id);
+        animateToCart();
     }
 
     return (
@@ -220,7 +274,7 @@ export default function ProductWhiteBox({
                     <WishListButton wished={isWished ? "true" : undefined} onClick={addToWishList}>
                         {isWished ? <HeartSolidIcon/> : <HeartOutlineIcon/>}
                     </WishListButton>
-                    <img src={images?.[0]} alt=""/>
+                    <img ref={imgRef} src={images?.[0]} alt=""/>
                 </div>
             </WhiteBox>
             <ProductInfoBox>
@@ -229,7 +283,7 @@ export default function ProductWhiteBox({
                     <Price>
                         {price} AED
                     </Price>
-                    <StyledButton block onClick={() => addProduct(_id)} primary={1} outline={1}>
+                    <StyledButton block onClick={handleAddToCart} primary={1} outline={1}>
                       Add to Cart
                     </StyledButton>
                 </PriceRow>

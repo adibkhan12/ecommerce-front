@@ -241,7 +241,7 @@ export default function Header() {
                         <NavLink href="/products">All Products</NavLink>
                         <NavLink href="/categories">Categories</NavLink>
                         <NavLink href="/account">Account</NavLink>
-                        <NavLink href="/cart">
+                        <NavLink href="/cart" id="cart-link">
                             Cart {cartItemCount > 0 && <CartBadge>{cartItemCount}</CartBadge>}
                         </NavLink>
                         {/* Auth options in nav as grey button */}
@@ -262,6 +262,7 @@ export default function Header() {
                         <NavButton 
                             onClick={() => setMobileNavActive((prev) => !prev)}
                             aria-label={mobileNavActive ? "Close menu" : "Open menu"}
+                            id="bars-icon"
                         >
                             <BarsIcon />
                         </NavButton>
