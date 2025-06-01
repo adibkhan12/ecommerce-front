@@ -1,9 +1,7 @@
 import Header from "@/components/Header";
 import Featured from "@/components/Featured";
 import NewProducts from "@/components/NewProducts";
-// import ShopByBrand from "@/components/ShopByBrand";
-import ProductsGrid from "@/components/ProductsGrid";
-import Title from "@/components/Title";
+import ShopByBrand from "@/components/ShopByBrand";
 import CategorySection from "@/components/CategorySection";
 import {mongooseConnect} from "@/lib/mongoose";
 import {Product} from "@/models/product";
@@ -20,6 +18,7 @@ export default function HomePage({ featuredProduct, newProducts, wishedNewProduc
       <Header />
       <Center>
         <Featured product={featuredProduct} />
+        <ShopByBrand />
         <NewProducts products={newProducts} wishedProducts={wishedNewProducts} />
         {categoriesWithProducts && categoriesWithProducts.map(cat => (
           <CategorySection key={cat._id} {...cat} wishedProducts={cat.wishedProducts} />
