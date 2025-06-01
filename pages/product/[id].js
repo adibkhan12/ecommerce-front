@@ -16,10 +16,18 @@ const ColsWrapper = styled.div`
   flex-direction: column;
   gap: 36px;
   margin: 40px 0;
+  width: 100%;
+  max-width: 1200px;
+  box-sizing: border-box;
   @media screen and (min-width: 900px) {
     flex-direction: row;
     align-items: flex-start;
     gap: 48px;
+    max-width: 1200px;
+  }
+  @media screen and (max-width: 900px) {
+    padding: 0 4px;
+    max-width: 100vw;
   }
 `;
 
@@ -172,7 +180,12 @@ export default function ProductPage({ product }) {
 
                         <PriceRow>
                             <Price>AED {product.price}</Price>
-                            <StyledButton onClick={() => addProduct(product._id)} primary={1} outline={1} style={{
+                            {product.stock === 0 ? (
+                              <span style={{ color: 'red', fontWeight: 600, fontSize: '1.13rem', marginTop: 18 }}>
+                                Out of Stock
+                              </span>
+                            ) : (
+                              <StyledButton onClick={() => addProduct(product._id)} primary={1} outline={1} style={{
                                 minWidth: 180,
                                 fontSize: '1.13rem',
                                 fontWeight: 700,
@@ -181,10 +194,11 @@ export default function ProductPage({ product }) {
                                 border: 'none',
                                 boxShadow: '0 2px 8px rgba(255,153,0,0.10)',
                                 marginTop: 18,
-                            }}>
+                              }}>
                                 <CartIcon />
                                 Add to Cart
-                            </StyledButton>
+                              </StyledButton>
+                            )}
                         </PriceRow>
                     </ProductDetails>
                 </ColsWrapper>

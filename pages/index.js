@@ -12,15 +12,19 @@ import {getServerSession} from "next-auth";
 import {WishedProduct} from "@/models/WishedProduct";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
+import Center from "@/components/Center";
+
 export default function HomePage({ featuredProduct, newProducts, wishedNewProducts, categoriesWithProducts }) {
   return (
-    <div style={{ background: "linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%)" }}>
+    <div style={{ background: "linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%)", minHeight: '100vh', width: '100%' }}>
       <Header />
-      <Featured product={featuredProduct} />
-      <NewProducts products={newProducts} wishedProducts={wishedNewProducts} />
-      {categoriesWithProducts && categoriesWithProducts.map(cat => (
-        <CategorySection key={cat._id} {...cat} wishedProducts={cat.wishedProducts} />
-      ))}
+      <Center>
+        <Featured product={featuredProduct} />
+        <NewProducts products={newProducts} wishedProducts={wishedNewProducts} />
+        {categoriesWithProducts && categoriesWithProducts.map(cat => (
+          <CategorySection key={cat._id} {...cat} wishedProducts={cat.wishedProducts} />
+        ))}
+      </Center>
     </div>
   );
 }

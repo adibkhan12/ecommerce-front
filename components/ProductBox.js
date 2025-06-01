@@ -186,6 +186,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
 
 export default function ProductWhiteBox({
     _id, title, price, images, wished: initialWished,
+    stock,
     onRemoveFromWishlist = ()=>{},
 }) {
     const {addProduct}=useContext(CartContext)
@@ -283,9 +284,13 @@ export default function ProductWhiteBox({
                     <Price>
                         {price} AED
                     </Price>
-                    <StyledButton block onClick={handleAddToCart} primary={1} outline={1}>
-                      Add to Cart
-                    </StyledButton>
+                    {stock === 0 ? (
+                      <span style={{ color: 'red', fontWeight: 600, fontSize: '1rem' }}>Out of Stock</span>
+                    ) : (
+                      <StyledButton block onClick={handleAddToCart} primary={1} outline={1}>
+                        Add to Cart
+                      </StyledButton>
+                    )}
                 </PriceRow>
             </ProductInfoBox>
         </ProductWrapper>

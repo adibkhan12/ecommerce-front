@@ -10,13 +10,20 @@ import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {WishedProduct} from "@/models/WishedProduct";
 
 const PageWrapper = styled.div`
-  padding: 20px;
-  background-color: #f9f9f9; 
+  width: 100%;
   min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%);
 `;
 
 const ProductsSection = styled.section`
   margin: 40px 0;
+  width: 100%;
+  max-width: 1200px;
+  box-sizing: border-box;
+  @media (max-width: 900px) {
+    max-width: 100vw;
+    padding: 0 4px;
+  }
 `;
 
 export default function ProductPage({ products, wishedProducts }) {

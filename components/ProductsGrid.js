@@ -35,6 +35,7 @@ export default function ProductsGrid({ products, wishedProducts }) {
           transition={{ delay: index * 0.07, duration: 0.5 }}
         >
           <ProductBox {...product}
+            stock={product.stock}
             wished={safeWishedProducts.includes(product._id)}
           />
         </motion.div>
