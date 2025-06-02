@@ -12,7 +12,6 @@ import {WishedProduct} from "@/models/WishedProduct";
 const PageWrapper = styled.div`
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 60%, #e0e7ef 100%);
 `;
 
 const ProductsSection = styled.section`

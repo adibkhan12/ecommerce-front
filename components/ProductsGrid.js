@@ -4,22 +4,19 @@ import { motion } from "framer-motion";
 
 const StyledProductsGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 28px;
-  @media (min-width: 480px) {
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  @media (min-width: 786px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 600px) {
     grid-template-columns: 1fr 1fr;
-  }
-  @media (min-width: 900px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  }
-  @media (min-width: 1200px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  }
-  @media (min-width: 600px) and (max-width: 899px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-  @media screen and (max-width: 600px){
-    gap: 16px;
+    gap: 12px;
   }
 `;
 
