@@ -216,13 +216,7 @@ export default function Footer() {
             <QuickLinks>
             <li>
             <span className="emoji" role="img" aria-label="about">ℹ️</span>
-            <a href="#contactinfo" onClick={e => {
-            e.preventDefault();
-            const el = document.getElementById('contactinfo');
-            if (el) {
-            el.scrollIntoView({ behavior: 'smooth' });
-            }
-            }}>About Us</a>
+            <Link href="/about">About Us</Link>
             </li>
             <li>
             <span className="emoji" role="img" aria-label="terms">📄</span>
