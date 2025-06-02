@@ -42,8 +42,12 @@ const ProductsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
-  @media (min-width: 786px) {
-    grid-template-columns: repeat(4, 2fr);
+  @media (min-width: 768px) and (max-width: 1023px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
   }
 `;

@@ -6,16 +6,16 @@ const StyledProductsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
-  @media (min-width: 786px) {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+  @media (min-width: 768px) and (max-width: 1023px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
   }
   @media (min-width: 1024px) {
     grid-template-columns: repeat(6, 1fr);
     gap: 28px;
   }
   @media (max-width: 600px) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 `;
