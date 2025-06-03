@@ -1,5 +1,4 @@
 import Header from "@/components/Header";
-import Featured from "@/components/Featured";
 import NewProducts from "@/components/NewProducts";
 import ShopByBrand from "@/components/ShopByBrand";
 import CategorySection from "@/components/CategorySection";
@@ -9,18 +8,19 @@ import {Setting} from "@/models/Setting";
 import {getServerSession} from "next-auth";
 import {WishedProduct} from "@/models/WishedProduct";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import FeaturedSlider from "@/components/FeaturedSlider";
 
 
-export default function HomePage({ featuredProduct, newProducts, wishedNewProducts, categoriesWithProducts }) {
+export default function HomePage({ featuredProducts, newProducts, wishedNewProducts, categoriesWithProducts }) {
   return (
     <div>
       <Header />
-        <Featured product={featuredProduct} />
-        <ShopByBrand />
-        <NewProducts products={newProducts} wishedProducts={wishedNewProducts} />
-        {categoriesWithProducts && categoriesWithProducts.map(cat => (
-          <CategorySection key={cat._id} {...cat} wishedProducts={cat.wishedProducts} />
-        ))}
+      <FeaturedSlider products={featuredProducts} />
+      <ShopByBrand />
+      <NewProducts products={newProducts} wishedProducts={wishedNewProducts} />
+      {categoriesWithProducts && categoriesWithProducts.map(cat => (
+        <CategorySection key={cat._id} {...cat} wishedProducts={cat.wishedProducts} />
+      ))}
     </div>
   );
 }
@@ -28,13 +28,18 @@ export default function HomePage({ featuredProduct, newProducts, wishedNewProduc
 export async function getServerSideProps(ctx){
     await mongooseConnect();
     const { Category } = require("@/models/Category");
-    // Fetch the featured product ID from settings
-    const featuredProductSetting = await Setting.findOne({ name: "featuredProductId" });
-
-    let featuredProduct = null;
-    if (featuredProductSetting?.value) {
-        featuredProduct = await Product.findById(featuredProductSetting.value);
-    }
+    // Fetch the three featured product IDs from settings
+    const [setting1, setting2, setting3] = await Promise.all([
+      Setting.findOne({ name: "featuredProductId1" }),
+      Setting.findOne({ name: "featuredProductId2" }),
+      Setting.findOne({ name: "featuredProductId3" })
+    ]);
+    const featuredIds = [setting1?.value, setting2?.value, setting3?.value].filter(Boolean);
+    const featuredProducts = featuredIds.length > 0
+      ? await Product.find({ _id: { $in: featuredIds } })
+      : [];
+    // Ensure the order matches the settings
+    const featuredProductsOrdered = featuredIds.map(id => featuredProducts.find(p => p._id.toString() === id)).filter(Boolean);
 
     const newProducts = await Product.find({}, null, {sort: {'_id':-1}, limit: 12});
 
@@ -81,7 +86,7 @@ export async function getServerSideProps(ctx){
 
     return {
         props: {
-            featuredProduct: JSON.parse(JSON.stringify(featuredProduct)),
+            featuredProducts: JSON.parse(JSON.stringify(featuredProductsOrdered)),
             newProducts: JSON.parse(JSON.stringify(newProducts)),
             wishedNewProducts: wishedNewProducts.map(i => i.product.toString()),
             categoriesWithProducts: categoriesWithWished,
