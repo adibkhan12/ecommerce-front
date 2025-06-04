@@ -87,8 +87,25 @@ const Thumbnail = styled.img`
 
 `;
 
+const ZoomModalOverlay = styled.div`
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const ZoomModalImg = styled.img`
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+`;
+
 export default function ProductImages({ images }) {
     const [selectedImage, setSelectedImage] = useState(images?.[0]);
+    const [zoomed, setZoomed] = useState(false);
     const scrollRef = useRef(null);
     let scrollInterval;
 
@@ -110,10 +127,14 @@ export default function ProductImages({ images }) {
 
     return (
         <div>
-            <MainImageContainer>
+            <MainImageContainer onClick={() => setZoomed(true)} style={{ cursor: 'zoom-in' }}>
                 <MainImage src={selectedImage} alt="Selected Product Image" />
             </MainImageContainer>
-
+            {zoomed && (
+              <ZoomModalOverlay onClick={() => setZoomed(false)}>
+                <ZoomModalImg src={selectedImage} alt="Zoomed Product" />
+              </ZoomModalOverlay>
+            )}
             <ThumbnailContainer>
                 <ScrollZone left onMouseEnter={() => startScroll("left")} onMouseLeave={stopScroll} />
                 <ScrollableWrapper ref={scrollRef}>

@@ -5,6 +5,8 @@ import { Product } from "@/models/product";
 import ProductsGrid from "@/components/ProductsGrid";
 import Title from "@/components/Title";
 import styled from "styled-components";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {WishedProduct} from "@/models/WishedProduct";
@@ -25,24 +27,93 @@ const ProductsSection = styled.section`
   }
 `;
 
-export default function ProductPage({ products, wishedProducts }) {
-    return (
-        <>
-            <Header />
-            <PageWrapper>
-                <Center>
-                    <ProductsSection>
-                        <Title>All Products</Title>
-                        {products && products.length > 0 ? (
-                            <ProductsGrid products={products} wishedProducts={wishedProducts} />
-                        ) : (
-                            <div>No products available at the moment.</div>
-                        )}
-                    </ProductsSection>
-                </Center>
-            </PageWrapper>
-        </>
-    );
+const FilterWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 24px;
+`;
+const Filter = styled.div`
+  background-color: #f1f1f1;
+  padding: 8px 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #555;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, box-shadow 0.3s;
+  select {
+    background-color: transparent;
+    border: none;
+    font-size: 1rem;
+    color: #555;
+    outline: none;
+    cursor: pointer;
+    &:hover { color: #333; }
+  }
+  span { font-weight: bold; color: #4caf50; }
+`;
+
+export default function ProductPage({ products: originalProducts, wishedProducts }) {
+  const [products, setProducts] = useState(originalProducts);
+  const [brands, setBrands] = useState([]);
+  const [brand, setBrand] = useState('all');
+  const [sort, setSort] = useState('price_asc');
+
+  useEffect(() => {
+    // Fetch unique brands from products
+    const uniqueBrands = Array.from(new Set(originalProducts.map(p => p.properties?.Brand).filter(Boolean)));
+    setBrands(uniqueBrands);
+  }, [originalProducts]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (brand !== 'all') params.set('Brand', brand);
+    params.set('sort', sort);
+    axios.get('/api/products?' + params.toString()).then(res => setProducts(res.data));
+  }, [brand, sort]);
+
+  return (
+    <>
+      <Header />
+      <PageWrapper>
+        <Center>
+          <ProductsSection>
+            <Title>All Products</Title>
+            <FilterWrapper>
+              <Filter>
+                <span>Brand:</span>
+                <select value={brand} onChange={e => setBrand(e.target.value)}>
+                  <option value="all">All</option>
+                  {brands.map(b => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
+              </Filter>
+              <Filter>
+                <span>Sorting:</span>
+                <select value={sort} onChange={e => setSort(e.target.value)}>
+                  <option value="price_asc">Price, Lowest First</option>
+                  <option value="price_desc">Price, Highest First</option>
+                  <option value="name_asc">Name, A-Z</option>
+                  <option value="name_desc">Name, Z-A</option>
+                  <option value="newest">Newest</option>
+                </select>
+              </Filter>
+            </FilterWrapper>
+            {products && products.length > 0 ? (
+              <ProductsGrid products={products} wishedProducts={wishedProducts} enableCompare={true} />
+            ) : (
+              <div>No products available at the moment.</div>
+            )}
+          </ProductsSection>
+        </Center>
+      </PageWrapper>
+    </>
+  );
 }
 
 export async function getServerSideProps(ctx) {

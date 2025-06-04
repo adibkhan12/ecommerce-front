@@ -39,13 +39,22 @@ export default async function handler(req, res) {
     let sortQuery = {};
     if (sortField === 'price') {
         sortQuery.price = sortOrder === 'asc' ? 1 : -1;
+    } else if (sortField === 'name') {
+        sortQuery.title = sortOrder === 'asc' ? 1 : -1;
     } else {
         // Default sorting if sortField is invalid
         sortQuery.createdAt = -1;  // Newest first
     }
 
     // Fetch products with filters and sorting
-    const products = await Product.find(query).sort(sortQuery);
+    let products;
+    if (sortField === 'name') {
+        products = await Product.find(query)
+            .collation({ locale: 'en', strength: 1 })
+            .sort(sortQuery);
+    } else {
+        products = await Product.find(query).sort(sortQuery);
+    }
 
     res.json(products);
 }

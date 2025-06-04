@@ -30,21 +30,25 @@ const BrandItem = styled.li`
   background: linear-gradient(90deg, #f8fafc 60%, #e0e7ef 100%);
   border-radius: 10px;
   padding: 12px 28px;
-  font-weight: 600;
-  font-size: 1.08rem;
+  font-weight: 700;
+  font-size: 1.12rem;
   color: #222;
   cursor: pointer;
   box-shadow: 0 1px 6px rgba(44,62,80,0.06);
   border: 1px solid #f0f0f0;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  letter-spacing: 0.5px;
   &:hover {
     background: #fffae6;
     color: #ff9900;
     box-shadow: 0 2px 12px rgba(255,153,0,0.10);
+    text-decoration: none;
   }
   @media (max-width: 600px) {
     padding: 10px 16px;
-    font-size: 0.98rem;
+    font-size: 1.02rem;
   }
 `;
 

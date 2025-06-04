@@ -9,15 +9,18 @@ import {getServerSession} from "next-auth";
 import {WishedProduct} from "@/models/WishedProduct";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import FeaturedSlider from "@/components/FeaturedSlider";
-
+import HeroBanner from "@/components/HeroBanner";
+import CategoryNav from "@/components/CategoryNav";
 
 export default function HomePage({ featuredProducts, newProducts, wishedNewProducts, categoriesWithProducts }) {
   return (
     <div>
       <Header />
+      <HeroBanner />
+      <CategoryNav />
       <FeaturedSlider products={featuredProducts} />
       <ShopByBrand />
-      <NewProducts products={newProducts} wishedProducts={wishedNewProducts} />
+      <NewProducts products={newProducts} wishedProducts={wishedNewProducts} enableCompare={true} />
       {categoriesWithProducts && categoriesWithProducts.map(cat => (
         <CategorySection key={cat._id} {...cat} wishedProducts={cat.wishedProducts} />
       ))}

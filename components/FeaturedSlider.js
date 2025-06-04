@@ -86,11 +86,13 @@ const SlideImageBox = styled.div`
   min-height: 220px;
   max-width: 420px;
   max-height: 420px;
+  margin-top:15px;
   background: none;
   box-shadow: none;
   border-radius: 0;
   overflow: hidden;
   @media (max-width: 1024px) {
+    margin-top:15px;
     width: 260px;
     height: 260px;
     min-width: 160px;
@@ -99,12 +101,11 @@ const SlideImageBox = styled.div`
     max-height: 320px;
   }
   @media (max-width: 768px) {
-    width: 90vw;
-    height: 40vw;
-    min-width: 120px;
-    min-height: 120px;
+    margin-top:35px;
+    width: 100vw;
+    height: 80vw;
     max-width: 100vw;
-    max-height: 60vw;
+    max-height: 100vw;
     margin: 0 auto 18px auto;
   }
 `;

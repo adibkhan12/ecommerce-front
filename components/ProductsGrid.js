@@ -20,23 +20,72 @@ const StyledProductsGrid = styled.div`
   }
 `;
 
-export default function ProductsGrid({ products, wishedProducts }) {
+import { useState } from "react";
+import CompareModal from "@/components/CompareModal";
+
+export default function ProductsGrid({ products, wishedProducts, enableCompare }) {
   const safeWishedProducts = Array.isArray(wishedProducts) ? wishedProducts : [];
+  const [compareIds, setCompareIds] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
+  function handleCompareChange(productId, checked) {
+    setCompareIds(prev => {
+      if (checked) {
+        if (prev.length >= 4) return prev; // Max 4
+        return [...prev, productId];
+      } else {
+        return prev.filter(id => id !== productId);
+      }
+    });
+  }
+
+  const selectedProducts = products.filter(p => compareIds.includes(p._id));
+
   return (
-    <StyledProductsGrid>
-      {products?.length > 0 && products.map((product, index) => (
-        <motion.div
-          key={product._id}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.07, duration: 0.5 }}
+    <>
+      <StyledProductsGrid>
+        {products?.length > 0 && products.map((product, index) => (
+          <motion.div
+            key={product._id}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.07, duration: 0.5 }}
+          >
+            <ProductBox {...product}
+              stock={product.stock}
+              wished={safeWishedProducts.includes(product._id)}
+              compareEnabled={enableCompare}
+              compareChecked={compareIds.includes(product._id)}
+              onCompareChange={checked => handleCompareChange(product._id, checked)}
+            />
+          </motion.div>
+        ))}
+      </StyledProductsGrid>
+      {enableCompare && compareIds.length >= 2 && (
+        <button
+          style={{
+            position: 'fixed',
+            bottom: 32,
+            right: 32,
+            zIndex: 10001,
+            background: '#ff9900',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 24,
+            padding: '14px 32px',
+            fontSize: '1.2rem',
+            fontWeight: 700,
+            boxShadow: '0 4px 16px rgba(44,62,80,0.18)',
+            cursor: 'pointer',
+          }}
+          onClick={() => setShowModal(true)}
         >
-          <ProductBox {...product}
-            stock={product.stock}
-            wished={safeWishedProducts.includes(product._id)}
-          />
-        </motion.div>
-      ))}
-    </StyledProductsGrid>
+          Compare ({compareIds.length})
+        </button>
+      )}
+      {showModal && (
+        <CompareModal products={selectedProducts} onClose={() => setShowModal(false)} />
+      )}
+    </>
   );
 }

@@ -6,6 +6,9 @@ import {CartContext} from "@/components/CartContext";
 import HeartSolidIcon from "@/components/icons/HeartSolidIcon";
 import HeartOutlineIcon from "@/components/icons/HeartOutlineIcon";
 import axios from "axios";
+import { useRef } from "react";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
 
 const WhiteBox = styled(Link)`
   background: linear-gradient(135deg, #f9f9f9 60%, #f3f3f3 100%);
@@ -71,9 +74,9 @@ const WishListButton = styled.button`
   height: 38px;
   background: #fff;
   border-radius: 50%;
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  position: relative;
+  top: -4px;
+  right: 0;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -82,11 +85,12 @@ const WishListButton = styled.button`
   transition: box-shadow 0.2s, background 0.2s;
   z-index: 2;
   color: ${({ wished }) => (wished ? 'red' : '#bbb')};
+  margin-left: 8px;
   @media (max-width: 600px) {
     width: 24px;
     height: 24px;
-    top: 2px;
-    right: 2px;
+    top: -2px;
+    right: 0;
     svg {
       width: 14px;
       height: 14px;
@@ -180,22 +184,59 @@ const StyledButton = styled(Button)`
     border-radius: 6px;
   }
 `;
-import { useRef } from "react";
-import Swal from "sweetalert2";
-import "sweetalert2/dist/sweetalert2.min.css";
+
+const CompareCheckbox = styled.input`
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 3;
+  width: 20px;
+  height: 20px;
+  accent-color: #ff9900;
+  @media (max-width: 600px) {
+    left: 2px;
+    top: 2px;
+    width: 14px;
+    height: 14px;
+  }
+`;
+
+function StarRating({ value }) {
+  return (
+    <span style={{ display: 'inline-flex', gap: 1, fontSize: '1.1em', marginTop: 2 }}>
+      {[1,2,3,4,5].map(star => (
+        <span key={star} style={{ color: star <= value ? '#ff9900' : '#ccc' }}>&#9733;</span>
+      ))}
+    </span>
+  );
+}
 
 export default function ProductWhiteBox({
     _id, title, price, images, wished: initialWished,
     stock,
+    compareEnabled = false,
+    compareChecked = false,
+    onCompareChange = () => {},
     onRemoveFromWishlist = ()=>{},
 }) {
     const {addProduct}=useContext(CartContext)
     const url = '/product/'+_id;
     const[isWished,setIsWished] = useState(initialWished);
     const imgRef = useRef();
+    const [avgRating, setAvgRating] = useState(null);
     useEffect(() => {
         setIsWished(initialWished);
     }, [initialWished]);
+    useEffect(() => {
+      axios.get(`/api/reviews?product=${_id}`).then(res => {
+        if (res.data.length) {
+          const avg = res.data.reduce((a, r) => a + r.rating, 0) / res.data.length;
+          setAvgRating(avg);
+        } else {
+          setAvgRating(null);
+        }
+      });
+    }, [_id]);
 
     function addToWishList(ev) {
         ev.preventDefault();
@@ -270,16 +311,36 @@ export default function ProductWhiteBox({
 
     return (
         <ProductWrapper>
-            <WhiteBox href={url}>
-                <div className="image-container">
+            <div style={{ position: 'relative' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'absolute', top: 10, left: 10, right: 10, zIndex: 3 }}>
+                    {compareEnabled && (
+                      <CompareCheckbox
+                        type="checkbox"
+                        checked={compareChecked}
+                        onChange={e => {
+                          onCompareChange(e.target.checked);
+                        }}
+                        title="Compare"
+                        style={{ position: 'static' }}
+                      />
+                    )}
                     <WishListButton wished={isWished ? "true" : undefined} onClick={addToWishList}>
                         {isWished ? <HeartSolidIcon/> : <HeartOutlineIcon/>}
                     </WishListButton>
-                    <img ref={imgRef} src={images?.[0]} alt=""/>
                 </div>
-            </WhiteBox>
+                <WhiteBox href={url}>
+                    <div className="image-container">
+                        <img ref={imgRef} src={images?.[0]} alt=""/>
+                    </div>
+                </WhiteBox>
+            </div>
             <ProductInfoBox>
                 <Title href={url}>{title}</Title>
+                {avgRating && (
+                  <div style={{ margin: '2px 0 4px 0' }}>
+                    <StarRating value={Math.round(avgRating)} />
+                  </div>
+                )}
                 <PriceRow>
                     <Price>
                         {price} AED

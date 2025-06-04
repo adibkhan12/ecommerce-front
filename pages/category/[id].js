@@ -156,7 +156,7 @@ export default function CategoryPage({
                     </FilterWrapper>
                 </CategoryHeader>
                 {products.length > 0 ? (
-                    <ProductsGrid products={products} />
+                    <ProductsGrid products={products} enableCompare={true} />
                 ) : (
                     <NoProductsMessage>
                         😔 No products available for the selected filters.<br />
