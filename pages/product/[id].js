@@ -1,21 +1,20 @@
-import ProductImages from "@/components/ProductImages";
+import React, { useContext, useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+
 import Header from "@/components/Header";
 import Center from "@/components/Center";
 import Title from "@/components/Title";
+import ProductImages from "@/components/ProductImages";
 import CartIcon from "@/components/icons/CartIcon";
-import {mongooseConnect} from "@/lib/mongoose";
-import {Product} from "@/models/product";
-import {CartContext} from "@/components/CartContext";
-import {useContext, useState} from "react";
 import WhiteBox from "@/components/Box";
-import styled from "styled-components";
 import Button from "@/components/Button";
 import ProductsGrid from "@/components/ProductsGrid";
-import { useSession } from "next-auth/react";
-import { useEffect } from "react";
-import axios from "axios";
-import { useRef } from "react";
-import { useRouter } from "next/router";
+import { CartContext } from "@/components/CartContext";
+import { mongooseConnect } from "@/lib/mongoose";
+import { Product } from "@/models/product";
 
 const ColsWrapper = styled.div`
   display: flex;
@@ -71,6 +70,8 @@ const ProductDetails = styled.div`
   flex-direction: column;
   gap: 18px;
   min-width: 320px;
+  max-width: 100%;
+  overflow: hidden;
   @media screen and (max-width: 900px) {
     min-width: 0;
     padding: 24px 10px 18px 10px;
@@ -145,6 +146,24 @@ const TabsWrapper = styled.div`
   gap: 0;
   margin: 18px 0 0 0;
   border-bottom: 2px solid #f0f0f0;
+  max-width: 100%;
+  overflow-x: auto;
+  @media (max-width: 600px) {
+    width: 100vw;
+    margin-left: -8px;
+    margin-right: -8px;
+    min-width: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  @media (max-width: 600px) {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 `;
 const Tab = styled.button`
   background: none;
@@ -157,6 +176,21 @@ const Tab = styled.button`
   cursor: pointer;
   transition: color 0.2s, border-bottom 0.2s;
   outline: none;
+  @media (max-width: 600px) {
+    display: inline-block;
+    min-width: 120px;
+    max-width: 200px;
+    flex: none;
+    padding: 10px 12px 8px 12px;
+    font-size: 0.98rem;
+    text-align: center;
+    box-sizing: border-box;
+    white-space: normal;
+  }
+  @media (min-width: 601px) and (max-width: 900px) {
+    padding: 12px 16px 10px 16px;
+    font-size: 1.05rem;
+  }
 `;
 const TabPanel = styled.div`
   padding: 18px 0 0 0;
@@ -164,6 +198,7 @@ const TabPanel = styled.div`
   box-sizing: border-box;
   word-break: break-word;
   overflow-wrap: break-word;
+  overflow-x: auto;
   @media (max-width: 600px) {
     padding: 12px 2px 0 2px;
   }
@@ -172,12 +207,13 @@ const TabPanel = styled.div`
 export default function ProductPage({ product, relatedProducts = [] }) {
     const { addProduct } = useContext(CartContext);
     const [tab, setTab] = useState('description');
-    // Delivery estimate: 2-4 days from now
-    const deliveryEstimate = () => {
+    // Delivery estimate: 2-4 days from now (client-only to avoid hydration mismatch)
+    const [deliveryEstimate, setDeliveryEstimate] = useState("");
+    useEffect(() => {
       const d = new Date();
       d.setDate(d.getDate() + 2 + Math.floor(Math.random()*3));
-      return d.toLocaleDateString();
-    };
+      setDeliveryEstimate(d.toLocaleDateString());
+    }, []);
 
     return (
         <>
@@ -253,7 +289,7 @@ export default function ProductPage({ product, relatedProducts = [] }) {
                             )}
                         </PriceRow>
                         <div style={{ color: '#4caf50', fontWeight: 600, fontSize: '1.08rem', marginTop: 8 }}>
-                          {product.stock === 0 ? 'Currently unavailable' : `Delivery by: ${deliveryEstimate()}`}
+                          {product.stock === 0 ? 'Currently unavailable' : deliveryEstimate ? `Delivery by: ${deliveryEstimate}` : ''}
                         </div>
                         <div style={{ display: 'flex', gap: 24, marginTop: 18, alignItems: 'center', flexWrap: 'wrap' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

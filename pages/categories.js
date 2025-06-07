@@ -1,15 +1,17 @@
-import Header from "@/components/Header";
-import Center from "@/components/Center";
-import { Category } from "@/models/Category";
-import { mongooseConnect } from "@/lib/mongoose";
-import { Product } from "@/models/product";
-import ProductWhiteBox from "@/components/ProductBox";
+import React from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import {WishedProduct} from "@/models/WishedProduct";
 import { motion } from "framer-motion";
+import { getServerSession } from "next-auth";
+
+import Header from "@/components/Header";
+import Center from "@/components/Center";
+import ProductWhiteBox from "@/components/ProductBox";
+import { Category } from "@/models/Category";
+import { Product } from "@/models/product";
+import { WishedProduct } from "@/models/WishedProduct";
+import { mongooseConnect } from "@/lib/mongoose";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 // import {RevealWrapper} from "next-reveal";
 
 // Styled Components

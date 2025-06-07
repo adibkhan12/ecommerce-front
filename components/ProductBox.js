@@ -218,6 +218,7 @@ export default function ProductWhiteBox({
     compareChecked = false,
     onCompareChange = () => {},
     onRemoveFromWishlist = ()=>{},
+    reviews = [],
 }) {
     const {addProduct}=useContext(CartContext)
     const url = '/product/'+_id;
@@ -227,16 +228,15 @@ export default function ProductWhiteBox({
     useEffect(() => {
         setIsWished(initialWished);
     }, [initialWished]);
+    // Calculate avgRating from reviews prop if provided
     useEffect(() => {
-      axios.get(`/api/reviews?product=${_id}`).then(res => {
-        if (res.data.length) {
-          const avg = res.data.reduce((a, r) => a + r.rating, 0) / res.data.length;
-          setAvgRating(avg);
-        } else {
-          setAvgRating(null);
-        }
-      });
-    }, [_id]);
+      if (Array.isArray(reviews) && reviews.length) {
+        const avg = reviews.reduce((a, r) => a + r.rating, 0) / reviews.length;
+        setAvgRating(avg);
+      } else {
+        setAvgRating(null);
+      }
+    }, [reviews]);
 
     function addToWishList(ev) {
         ev.preventDefault();

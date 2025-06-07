@@ -3,14 +3,12 @@ import styled from "styled-components";
 import Link from "next/link";
 import axios from "axios";
 
-// Map category names to icons (add more as needed)
+// Map category names to public SVG icon URLs
 const categoryIcons = {
-  Mobiles: "/icons/mobile.svg",
-  Laptops: "/icons/laptop.svg",
-  Tablets: "/icons/tablet.svg",
-  Accessories: "/icons/accessories.svg",
-  Wearables: "/icons/watch.svg",
-  Audio: "/icons/audio.svg"
+  Mobiles: "https://api.iconify.design/mdi:cellphone.svg",
+  Laptops: "https://api.iconify.design/mdi:laptop.svg",
+  Tablets: "https://api.iconify.design/mdi:tablet.svg",
+  Accessories: "https://api.iconify.design/mdi:headphones.svg",
 };
 
 const NavWrapper = styled.nav`
@@ -18,11 +16,11 @@ const NavWrapper = styled.nav`
   margin-left: 50%;
   transform: translateX(-50%);
   background: #fff;
-  padding: 18px 0 10px 0;
+  padding: 28px 0 18px 0;
   box-shadow: 0 2px 12px rgba(44,62,80,0.06);
   overflow-x: auto;
   @media (max-width: 768px) {
-    padding: 10px 0 6px 0;
+    padding: 18px 0 10px 0;
   }
 `;
 
@@ -63,9 +61,31 @@ const CategoryIcon = styled.img`
   width: 38px;
   height: 38px;
   margin-bottom: 6px;
+  animation: float-bounce 4.5s cubic-bezier(.4,1.3,.6,1) infinite;
+  @keyframes float-bounce {
+    0% { transform: translateY(0); }
+    12% { transform: translateY(-4px) scale(1.04); }
+    24% { transform: translateY(0); }
+    36% { transform: translateY(2px) scale(0.98); }
+    48% { transform: translateY(0); }
+    100% { transform: translateY(0); }
+  }
   @media (max-width: 768px) {
     width: 28px;
     height: 28px;
+  }
+`;
+
+const CategoryName = styled.span`
+  display: block;
+  font-weight: 600;
+  font-size: 1.05rem;
+  opacity: 0;
+  animation: fade-slide-in 0.9s cubic-bezier(.4,1.3,.6,1) forwards;
+  animation-delay: 0.3s;
+  @keyframes fade-slide-in {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
 `;
 
@@ -80,8 +100,8 @@ export default function CategoryNav() {
         {categories.map(cat => (
           <CategoryItem key={cat._id}>
             <CategoryLink href={`/category/${encodeURIComponent(cat.name.toLowerCase())}`}>
-              <CategoryIcon src={categoryIcons[cat.name] || "/icons/category.svg"} alt={cat.name} />
-              {cat.name}
+              <CategoryIcon src={categoryIcons[cat.name] || "https://api.iconify.design/mdi:apps.svg"} alt={cat.name} />
+              <CategoryName>{cat.name}</CategoryName>
             </CategoryLink>
           </CategoryItem>
         ))}

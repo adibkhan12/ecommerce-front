@@ -20,13 +20,23 @@ const StyledProductsGrid = styled.div`
   }
 `;
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CompareModal from "@/components/CompareModal";
+import axios from "axios";
 
 export default function ProductsGrid({ products, wishedProducts, enableCompare }) {
   const safeWishedProducts = Array.isArray(wishedProducts) ? wishedProducts : [];
   const [compareIds, setCompareIds] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [reviewsByProduct, setReviewsByProduct] = useState({});
+
+  useEffect(() => {
+    if (!products?.length) return;
+    const ids = products.map(p => p._id).join(',');
+    axios.get(`/api/reviews?products=${ids}`).then(res => {
+      setReviewsByProduct(res.data || {});
+    });
+  }, [products]);
 
   function handleCompareChange(productId, checked) {
     setCompareIds(prev => {
@@ -57,6 +67,7 @@ export default function ProductsGrid({ products, wishedProducts, enableCompare }
               compareEnabled={enableCompare}
               compareChecked={compareIds.includes(product._id)}
               onCompareChange={checked => handleCompareChange(product._id, checked)}
+              reviews={reviewsByProduct[product._id] || []}
             />
           </motion.div>
         ))}
