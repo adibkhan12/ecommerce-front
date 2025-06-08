@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "@/components/CartContext";
 import axios from "axios";
-import Image from "next/image";
+// import Image from "next/image";
 import { FaLock, FaChevronLeft, FaMapMarkerAlt, FaUser, FaEnvelope, FaPhone, FaCity, FaFlag, FaCreditCard, FaMoneyBillWave } from 'react-icons/fa';
 
 const PageBg = styled.div`
@@ -67,7 +67,7 @@ const CartItem = styled.div`
   padding: 10px 8px;
 `;
 
-const ProductImage = styled(Image)`
+const ProductImage = styled.img`
   border-radius: 10px;
   background: #fff;
 `;
@@ -339,6 +339,11 @@ export default function CartPage() {
               Soon you will get confirmation message via email or WhatsApp
             </SuccessMessage>
             <p style={{ textAlign: 'center', marginTop: 18 }}>THANK YOU FOR SHOPPING WITH US!</p>
+            <div style={{ textAlign: 'center', marginTop: 24 }}>
+              <a href="/order-tracking" style={{ color: '#0070f3', fontWeight: 600, textDecoration: 'underline', fontSize: '1.08rem' }}>
+                Track your order here
+              </a>
+            </div>
           </Card>
         </Main>
       </PageBg>
@@ -367,7 +372,7 @@ export default function CartPage() {
               {products.map((product, index) => {
                 if (!product) {
                   return (
-                    <div key={Math.random()} style={{ color: '#888', textAlign: 'center', padding: '20px' }}>
+                    <div key={product?._id || idx} style={{ color: '#888', textAlign: 'center', padding: '20px' }}>
                       This product is no longer available.
                     </div>
                   );
@@ -384,6 +389,7 @@ export default function CartPage() {
                       width={54}
                       height={54}
                       style={{ objectFit: "contain" }}
+                      loading="lazy"
                     />
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 600, fontSize: '1.05rem', marginBottom: 2 }}>{product.title}</div>
@@ -398,6 +404,11 @@ export default function CartPage() {
             </CartList>
           )}
         </Card>
+        <div style={{ textAlign: 'center', margin: '18px 0 24px 0' }}>
+          <a href="/order-tracking" style={{ color: '#0070f3', fontWeight: 600, textDecoration: 'underline', fontSize: '1.08rem' }}>
+            Track your order
+          </a>
+        </div>
         <Card>
           <SectionTitle><FaMapMarkerAlt /> Delivery Details</SectionTitle>
           <form onSubmit={e => { e.preventDefault(); placeOrderCOD(); }} autoComplete="on">

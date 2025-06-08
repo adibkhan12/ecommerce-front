@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Button from "@/components/Button";
 import {useContext, useRef, useState, useEffect} from "react";
 import {CartContext} from "@/components/CartContext";
+import Image from "next/image";
 
 const Bg = styled.div`
     background-color: #1a1a1a;
@@ -204,7 +205,17 @@ export default function Featured({ products = [] }) {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.7 }}
                         >
-                            <img ref={imgRef} src={product.images?.[0]} alt={product.title} />
+                            {product.images?.[0] && (
+                              <Image
+                                ref={imgRef}
+                                src={product.images[0]}
+                                alt={product.title}
+                                width={400}
+                                height={400}
+                                style={{ width: '100%', height: 'auto', objectFit: 'cover', borderRadius: 8, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)' }}
+                                priority={false}
+                              />
+                            )}
                         </motion.div>
                     </ImgColumn>
                 </ColumnWrapper>

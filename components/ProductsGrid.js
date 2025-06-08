@@ -21,7 +21,8 @@ const StyledProductsGrid = styled.div`
 `;
 
 import { useState, useEffect } from "react";
-import CompareModal from "@/components/CompareModal";
+import dynamic from "next/dynamic";
+const CompareModal = dynamic(() => import("@/components/CompareModal"), { ssr: false });
 import axios from "axios";
 
 export default function ProductsGrid({ products, wishedProducts, enableCompare }) {

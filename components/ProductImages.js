@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import {useRef, useState} from "react";
+import Image from "next/image";
 
 // Styled Components
 const MainImageContainer = styled.div`
@@ -17,11 +18,7 @@ const MainImageContainer = styled.div`
     margin-bottom: 20px;
 `;
 
-const MainImage = styled.img`
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Ensures proportional scaling within the box */
-`;
+// Remove MainImage styled.img, will use Next.js Image instead
 
 const ThumbnailWrapper = styled.div`
     display: flex;
@@ -65,27 +62,7 @@ const ScrollZone = styled.div`
     ${props => props.left ? `left: 0;` : `right: 0;`}
 `;
 
-const Thumbnail = styled.img`
-    ${props => props.active? `
-        border-color: #ccc;
-    `:`
-        border-color: transparent;
-    `}
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    padding: 2px;
-    border-radius: 4px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: border 0.3s ease;
-
-    &:hover {
-        border: 2px solid #000;
-    }
-
-
-`;
+// Remove Thumbnail styled.img, will use Next.js Image instead
 
 const ZoomModalOverlay = styled.div`
   position: fixed;
@@ -96,12 +73,7 @@ const ZoomModalOverlay = styled.div`
   align-items: center;
   justify-content: center;
 `;
-const ZoomModalImg = styled.img`
-  max-width: 90vw;
-  max-height: 90vh;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(44,62,80,0.18);
-`;
+// Remove ZoomModalImg styled.img, will use Next.js Image instead
 
 export default function ProductImages({ images }) {
     const [selectedImage, setSelectedImage] = useState(images?.[0]);
@@ -128,24 +100,47 @@ export default function ProductImages({ images }) {
     return (
         <div>
             <MainImageContainer onClick={() => setZoomed(true)} style={{ cursor: 'zoom-in' }}>
-                <MainImage src={selectedImage} alt="Selected Product Image" />
+                {selectedImage && (
+                  <Image
+                    src={selectedImage}
+                    alt="Selected Product Image"
+                    width={500}
+                    height={500}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    priority={false}
+                  />
+                )}
             </MainImageContainer>
             {zoomed && (
               <ZoomModalOverlay onClick={() => setZoomed(false)}>
-                <ZoomModalImg src={selectedImage} alt="Zoomed Product" />
+                {selectedImage && (
+                  <Image
+                    src={selectedImage}
+                    alt="Zoomed Product"
+                    width={900}
+                    height={900}
+                    style={{ maxWidth: '90vw', maxHeight: '90vh', borderRadius: '12px', boxShadow: '0 8px 32px rgba(44,62,80,0.18)' }}
+                  />
+                )}
               </ZoomModalOverlay>
             )}
             <ThumbnailContainer>
                 <ScrollZone left onMouseEnter={() => startScroll("left")} onMouseLeave={stopScroll} />
                 <ScrollableWrapper ref={scrollRef}>
                     {images.map((image, index) => (
-                        <Thumbnail
-                            key={index}
+                        <div
+                          key={index}
+                          style={{ border: selectedImage === image ? '2px solid #ccc' : '2px solid transparent', borderRadius: 4, padding: 2, cursor: 'pointer', width: 60, height: 60 }}
+                          onClick={() => setSelectedImage(image)}
+                        >
+                          <Image
                             src={image}
                             alt={`Thumbnail ${index + 1}`}
-                            onClick={() => setSelectedImage(image)}
-                            active={selectedImage === image}
-                        />
+                            width={60}
+                            height={60}
+                            style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+                          />
+                        </div>
                     ))}
                 </ScrollableWrapper>
                 <ScrollZone onMouseEnter={() => startScroll("right")} onMouseLeave={stopScroll} />

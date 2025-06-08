@@ -99,7 +99,7 @@ export default function CategoryNav() {
       <CategoryList>
         {categories.map(cat => (
           <CategoryItem key={cat._id}>
-            <CategoryLink href={`/category/${encodeURIComponent(cat.name.toLowerCase())}`}>
+            <CategoryLink href={`/category/${cat._id}`}>
               <CategoryIcon src={categoryIcons[cat.name] || "https://api.iconify.design/mdi:apps.svg"} alt={cat.name} />
               <CategoryName>{cat.name}</CategoryName>
             </CategoryLink>

@@ -5,8 +5,6 @@ import Whatsapp from "@/components/Whatsapp";
 import Footer from "@/components/Footer";
 
 const GlobalStyles = createGlobalStyle`
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
     body {
         background-color: #f9f9f9;
         padding: 0;
@@ -18,7 +16,32 @@ const GlobalStyles = createGlobalStyle`
 const BorderGap= styled.div`
 margin-top: 20px`;
 
+import { useEffect } from "react";
+
 export default function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+    useEffect(() => {
+        if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/service-worker.js").catch(err => {
+                    console.error("Service Worker registration failed:", err);
+                });
+            });
+        }
+    }, []);
+
+    // Hydration error fallback: reload on hydration error
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const handler = (e) => {
+                if (e.message && e.message.includes("Hydration failed")) {
+                    window.location.reload();
+                }
+            };
+            window.addEventListener("error", handler);
+            return () => window.removeEventListener("error", handler);
+        }
+    }, []);
+
     return (
         <>
             <GlobalStyles />

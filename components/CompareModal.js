@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Image from "next/image";
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -70,7 +71,17 @@ export default function CompareModal({ products, onClose }) {
             <tr>
               <th>Image</th>
               {products.map(p => (
-                <th key={p._id}><img src={p.images?.[0]} alt={p.title} style={{ maxWidth: 60, maxHeight: 60 }} /></th>
+                <th key={p._id}>
+                  {p.images?.[0] && (
+                    <Image
+                      src={p.images[0]}
+                      alt={p.title}
+                      width={60}
+                      height={60}
+                      style={{ maxWidth: 60, maxHeight: 60, objectFit: 'contain' }}
+                    />
+                  )}
+                </th>
               ))}
             </tr>
             <tr>

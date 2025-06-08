@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Button from "@/components/Button";
 import { useContext, useRef, useState, useEffect } from "react";
 import { CartContext } from "@/components/CartContext";
+import Image from "next/image";
 
 const SliderSection = styled.section`
   position: relative;
@@ -294,11 +295,17 @@ export default function FeaturedSlider({ products = [] }) {
       <SlideBg />
       <SlideRow>
         <SlideImageBox>
-          <SlideImage
-            src={product.images?.[0]}
-            alt={product.title}
-            ref={imgRef}
-          />
+          {product.images?.[0] && (
+            <Image
+              src={product.images[0]}
+              alt={product.title}
+              width={420}
+              height={420}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              ref={imgRef}
+              priority={false}
+            />
+          )}
         </SlideImageBox>
         <SlideContent>
           <motion.div

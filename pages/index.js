@@ -1,16 +1,17 @@
 import Header from "@/components/Header";
-import NewProducts from "@/components/NewProducts";
-import ShopByBrand from "@/components/ShopByBrand";
-import CategorySection from "@/components/CategorySection";
+import dynamic from "next/dynamic";
+const HeroBanner = dynamic(() => import("@/components/HeroBanner"), { ssr: false });
+const FeaturedSlider = dynamic(() => import("@/components/FeaturedSlider"), { ssr: false });
+const ShopByBrand = dynamic(() => import("@/components/ShopByBrand"), { ssr: false });
+const NewProducts = dynamic(() => import("@/components/NewProducts"), { ssr: false });
+const CategorySection = dynamic(() => import("@/components/CategorySection"), { ssr: false });
+import CategoryNav from "@/components/CategoryNav";
 import {mongooseConnect} from "@/lib/mongoose";
 import {Product} from "@/models/product";
 import {Setting} from "@/models/Setting";
 import {getServerSession} from "next-auth";
 import {WishedProduct} from "@/models/WishedProduct";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import FeaturedSlider from "@/components/FeaturedSlider";
-import HeroBanner from "@/components/HeroBanner";
-import CategoryNav from "@/components/CategoryNav";
 
 export default function HomePage({ featuredProducts, newProducts, wishedNewProducts, categoriesWithProducts }) {
   return (

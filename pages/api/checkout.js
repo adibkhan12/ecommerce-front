@@ -71,6 +71,20 @@ export default async function handler(req, res){
     paid: paymentMethod === 'COD' ? false : null, // Mark as unpaid for COD
     })
 
+    // Subtract stock for each product in the order
+    const Product = (await import("@/models/product")).Product;
+    for (const item of line_items) {
+      // Find product by name (as per your line_items structure)
+      const productName = item.price_data.product_data.name;
+      const quantity = item.quantity || 1;
+      // Find the product in DB
+      const productDoc = await Product.findOne({ title: productName });
+      if (productDoc) {
+        productDoc.stock = Math.max(0, (productDoc.stock || 0) - quantity);
+        await productDoc.save();
+      }
+    }
+
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST_MAIL,
     port: Number(process.env.SMTP_PORT_MAIL),

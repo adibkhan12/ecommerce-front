@@ -121,7 +121,7 @@ export default function ShopPage() {
             <SectionHeading>Shop Photos</SectionHeading>
             <PhotosGrid>
               <PhotoCard>
-                <img src="/shop1.jpg" alt="Shop Interior (public/shop1.jpg)" width="400" height="260" style={{borderRadius:'10px',objectFit:'cover',display:'block',maxWidth:'100%'}} />
+                <img src="/shop1.jpg" alt="Shop Interior (public/shop1.jpg)" width="400" height="260" style={{borderRadius:'10px',objectFit:'cover',display:'block',maxWidth:'100%'}} loading="lazy" />
               </PhotoCard>
             </PhotosGrid>
             <Divider />

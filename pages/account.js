@@ -202,7 +202,7 @@ export default function AccountPage() {
                                                 <ProductWhiteBox key={wp._id} {...wp} wished={true}
                                                     onRemoveFromWishlist={handleProductRemoval} />
                                             ) : (
-                                                <div key={Math.random()} style={{ color: '#888', textAlign: 'center', padding: '20px' }}>
+                                                <div key={product?._id || idx} style={{ color: '#888', textAlign: 'center', padding: '20px' }}>
                                                     This product is no longer available.
                                                 </div>
                                             )

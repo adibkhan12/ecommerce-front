@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Button from "@/components/Button";
 import Link from "next/link";
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useState, memo} from "react";
 import {CartContext} from "@/components/CartContext";
 import HeartSolidIcon from "@/components/icons/HeartSolidIcon";
 import HeartOutlineIcon from "@/components/icons/HeartOutlineIcon";
@@ -9,6 +9,7 @@ import axios from "axios";
 import { useRef } from "react";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import Image from "next/image";
 
 const WhiteBox = styled(Link)`
   background: linear-gradient(135deg, #f9f9f9 60%, #f3f3f3 100%);
@@ -211,7 +212,7 @@ function StarRating({ value }) {
   );
 }
 
-export default function ProductWhiteBox({
+const ProductWhiteBox = ({
     _id, title, price, images, wished: initialWished,
     stock,
     compareEnabled = false,
@@ -219,7 +220,7 @@ export default function ProductWhiteBox({
     onCompareChange = () => {},
     onRemoveFromWishlist = ()=>{},
     reviews = [],
-}) {
+}) => {
     const {addProduct}=useContext(CartContext)
     const url = '/product/'+_id;
     const[isWished,setIsWished] = useState(initialWished);
@@ -330,7 +331,17 @@ export default function ProductWhiteBox({
                 </div>
                 <WhiteBox href={url}>
                     <div className="image-container">
-                        <img ref={imgRef} src={images?.[0]} alt=""/>
+                        {images?.[0] && (
+                          <Image
+                            ref={imgRef}
+                            src={images[0]}
+                            alt={title}
+                            width={200}
+                            height={200}
+                            style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                            priority={false}
+                          />
+                        )}
                     </div>
                 </WhiteBox>
             </div>
@@ -357,3 +368,5 @@ export default function ProductWhiteBox({
         </ProductWrapper>
     )
 }
+
+export default memo(ProductWhiteBox);

@@ -101,6 +101,7 @@ const ProductImg = styled.img`
   margin-bottom: 10px;
   background: #f3f3f3;
 `;
+// Add loading="lazy" to all usages of ProductImg below
 const ProductName = styled.div`
   font-weight: 700;
   font-size: 1.08rem;
@@ -261,7 +262,7 @@ export default function OrderTracking() {
                             const img = item?.price_data?.product_data?.images?.[0];
                             return (
                               <ProductCard key={idx}>
-                                {img && <ProductImg src={img} alt={item?.price_data?.product_data?.name || 'Product'} />}
+                                {img && <ProductImg src={img} alt={item?.price_data?.product_data?.name || 'Product'} loading="lazy" />}
                                 <ProductName>{item?.price_data?.product_data?.name || 'Product'}</ProductName>
                                 <ProductMeta>Qty: {item?.quantity || 1}</ProductMeta>
                                 {item?.price_data?.unit_amount && (
@@ -336,7 +337,7 @@ export default function OrderTracking() {
                           const img = item?.price_data?.product_data?.images?.[0];
                           return (
                             <ProductCard key={idx}>
-                              {img && <ProductImg src={img} alt={item?.price_data?.product_data?.name || 'Product'} />}
+                              {img && <ProductImg src={img} alt={item?.price_data?.product_data?.name || 'Product'} loading="lazy" />}
                               <ProductName>{item?.price_data?.product_data?.name || 'Product'}</ProductName>
                               <ProductMeta>Qty: {item?.quantity || 1}</ProductMeta>
                               {item?.price_data?.unit_amount && (

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Image from "next/image";
 
 const FloatingButton = styled.a`
     position: fixed;
@@ -39,7 +40,7 @@ export default function Whatsapp() {
             target="_blank"
             rel="noopener noreferrer"
         >
-            <img src="/whatsapp-icon.png" alt="WhatsApp" />
+            <Image src="/whatsapp-icon.png" alt="WhatsApp" width={30} height={30} />
         </FloatingButton>
     );
 }

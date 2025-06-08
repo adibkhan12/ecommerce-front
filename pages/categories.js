@@ -6,7 +6,8 @@ import { getServerSession } from "next-auth";
 
 import Header from "@/components/Header";
 import Center from "@/components/Center";
-import ProductWhiteBox from "@/components/ProductBox";
+import dynamic from "next/dynamic";
+const ProductWhiteBox = dynamic(() => import("@/components/ProductBox"), { ssr: false });
 import { Category } from "@/models/Category";
 import { Product } from "@/models/product";
 import { WishedProduct } from "@/models/WishedProduct";

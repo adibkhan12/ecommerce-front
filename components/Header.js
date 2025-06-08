@@ -73,7 +73,8 @@ const NavLink = styled(Link)`
     color: #eee;
     text-decoration: none;
     font-size: 1.1rem;
-    padding: 12px 0;
+    padding: 16px 0;
+    min-height: 48px;
     transition: color 0.3s ease;
     font-weight: 500;
 
@@ -87,6 +88,7 @@ const NavLink = styled(Link)`
     @media screen and (min-width: 768px) {
         padding: 0;
         margin: 0 15px;
+        min-height: unset;
     }
 `;
 
@@ -188,7 +190,8 @@ const SideIcons = styled.div`
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 24px;
+        min-width: 48px;
+        min-height: 48px;
         color: white;
         transition: transform 0.2s ease;
         

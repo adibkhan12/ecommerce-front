@@ -212,7 +212,7 @@ export default function ProductPage({ product, relatedProducts = [] }) {
     useEffect(() => {
       const d = new Date();
       d.setDate(d.getDate() + 2 + Math.floor(Math.random()*3));
-      setDeliveryEstimate(d.toLocaleDateString());
+      setDeliveryEstimate(d.toLocaleDateString('en-GB', { timeZone: 'UTC' }));
     }, []);
 
     return (
@@ -399,7 +399,7 @@ function QATab({ productId }) {
                   <button onClick={() => setAnsweringId(qa._id)} style={{ color: '#ff9900', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, marginTop: 6 }}>Answer</button>
                 )
               )}
-              <div style={{ color: '#bbb', fontSize: '0.95em', marginTop: 2 }}>{new Date(qa.createdAt).toLocaleDateString()}</div>
+              <div style={{ color: '#bbb', fontSize: '0.95em', marginTop: 2 }}>{new Date(qa.createdAt).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</div>
             </div>
           ))}
         </div>
@@ -513,7 +513,7 @@ function ReviewsTab({ productId }) {
               <span style={{ color: '#bbb', fontSize: '0.97em' }}>{r.user}</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
               <StarRating value={r.rating} readOnly />
-              <span style={{ color: '#bbb', fontSize: '0.95em' }}>{new Date(r.createdAt).toLocaleDateString()}</span>
+              <span style={{ color: '#bbb', fontSize: '0.95em' }}>{new Date(r.createdAt).toLocaleDateString('en-GB', { timeZone: 'UTC' })}</span>
               </div>
               </div>
               <div style={{ margin: '8px 0', color: '#444' }}>{r.text}</div>
