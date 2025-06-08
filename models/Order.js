@@ -22,6 +22,8 @@ const OrderSchema = new Schema({
     country: String,
     paid:Boolean,
     number: String,
+    referralSource: { type: String, default: "" },
+    referralOther: { type: String, default: "" },
 },  {
     timestamps: true,
 });

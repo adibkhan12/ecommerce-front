@@ -6,6 +6,8 @@ const UserSchema = new Schema({
   password: { type: String, required: true }, // Hash, not plain text!
   resetPasswordToken: { type: String, default: null },      // For forgot password flow
   resetPasswordExpires: { type: Date, default: null },      // For forgot password flow
+  referralSource: { type: String, default: "" },
+  referralOther: { type: String, default: "" },
 }, { timestamps: true });
 
 // Avoid recompilation errors in Next.js API routes

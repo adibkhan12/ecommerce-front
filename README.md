@@ -24,6 +24,20 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## ⚠️ Hydration Errors and Browser Extensions
+
+Some browser extensions (such as ad blockers, password managers, dark mode tools, or Grammarly) or a corrupted service worker can modify the page before React/Next.js hydrates it. This may cause a reload loop or a message like:
+
+> Hydration failed because the server rendered HTML didn't match the client.
+
+If you or your users see this:
+- Try a hard refresh (Ctrl+Shift+R or Cmd+Shift+R)
+- Disable browser extensions one by one to find the culprit
+- Unregister any service workers (DevTools > Application > Service Workers > Unregister)
+- Try in incognito mode (where extensions are disabled)
+
+This is a known limitation of all React/Next.js SSR apps. Your data and site are safe; this is only a display issue caused by client-side modifications.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

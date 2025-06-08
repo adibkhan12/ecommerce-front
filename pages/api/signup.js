@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { name, email, password } = req.body;
+  const { name, email, password, referralSource = "", referralOther = "" } = req.body;
   if (!name || !email || !password) {
     return res.status(400).json({ error: "All fields are required." });
   }
@@ -20,7 +20,13 @@ export default async function handler(req, res) {
 
     // Hash password
     const hash = await bcrypt.hash(password, 10);
-    await User.create({ name, email, password: hash });
+    await User.create({
+      name,
+      email,
+      password: hash,
+      referralSource,
+      referralOther
+    });
 
     return res.status(201).json({ ok: true });
   } catch (error) {

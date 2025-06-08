@@ -196,6 +196,13 @@ const PlaceOrderBtn = styled.button`
   }
 `;
 
+const FieldGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+`;
+
 const BackLink = styled.a`
   display: flex;
   align-items: center;
@@ -229,6 +236,8 @@ export default function CartPage() {
   const [isClient, setIsClient] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [paymentMethod] = useState('cod');
+  const [referralSource, setReferralSource] = useState("");
+  const [referralOther, setReferralOther] = useState("");
 
   useEffect(() => {
     setIsClient(true);
@@ -291,6 +300,10 @@ export default function CartPage() {
       alert("Please fill in all required fields.");
       return false;
     }
+    if (!referralSource || (referralSource === "Other" && !referralOther)) {
+      alert("Please tell us where you heard about us.");
+      return false;
+    }
     return true;
   }
 
@@ -308,6 +321,8 @@ export default function CartPage() {
         country,
         cartProducts: cart.items,
         paymentMethod: "COD",
+        referralSource,
+        referralOther
       });
       if (response.status === 200) {
         clearCart();
@@ -354,7 +369,7 @@ export default function CartPage() {
     <PageBg>
       <Header />
       <Main>
-        <BackLink href="/shop"><FaChevronLeft /> Back to Shop</BackLink>
+        <BackLink href="/"><FaChevronLeft /> Back to Shop</BackLink>
         <ProgressBar>
           <span>Cart</span> &gt; Delivery &gt; Payment &gt; Review
         </ProgressBar>
@@ -500,6 +515,36 @@ export default function CartPage() {
                 autoComplete="country"
               />
             </InputGroup>
+            <FieldGroup>
+              <label htmlFor="referralSource" style={{ fontWeight: 500, color: '#444', marginBottom: 4 }}>Where did you hear about us?</label>
+              <select
+                id="referralSource"
+                name="referralSource"
+                value={referralSource}
+                onChange={e => setReferralSource(e.target.value)}
+                style={{ padding: '10px', borderRadius: '8px', border: '1.5px solid #e0e3e8', fontSize: '1rem', marginBottom: 8 }}
+                required
+                disabled={false}
+              >
+                <option value="">Select an option</option>
+                <option value="Google Search">Google Search</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Instagram">Instagram</option>
+                <option value="TikTok">TikTok</option>
+                <option value="Friend/Family">Friend/Family</option>
+                <option value="Other">Other</option>
+              </select>
+              {referralSource === "Other" && (
+                <StyledInput
+                  name="referralOther"
+                  type="text"
+                  placeholder="Please specify"
+                  value={referralOther}
+                  onChange={e => setReferralOther(e.target.value)}
+                  style={{ marginTop: 8 }}
+                />
+              )}
+            </FieldGroup>
             <PaymentOptions>
               <label className="disabled"><FaCreditCard />
                 <input type="radio" name="payment" value="credit_card" checked={false} disabled />

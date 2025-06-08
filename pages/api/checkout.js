@@ -12,8 +12,9 @@ export default async function handler(req, res){
     const {
         name, email, city,
         postalCode, addressLine1,
-        addressLine2,country,number
-        ,cartProducts,paymentMethod,
+        addressLine2,country,number,
+        cartProducts, paymentMethod,
+        referralSource = "", referralOther = ""
     } = req.body;
     await mongooseConnect();
     // Support both formats: array of product IDs or array of { product, quantity }
@@ -69,10 +70,11 @@ export default async function handler(req, res){
     number,
     country,
     paid: paymentMethod === 'COD' ? false : null, // Mark as unpaid for COD
+    referralSource,
+    referralOther
     })
 
     // Subtract stock for each product in the order
-    const Product = (await import("@/models/product")).Product;
     for (const item of line_items) {
       // Find product by name (as per your line_items structure)
       const productName = item.price_data.product_data.name;
@@ -176,22 +178,22 @@ const orderDetailsHtml = `
   </div>
 `;
 
-if (email) {
-    try {
-        const mailOptions = {
-            from: process.env.SMTP_FROM_MAIL,
-            to: email,
-            subject: 'Order Confirmation',
-            text: `Thank you for your order!\nOrder ID: ${orderDoc._id}\nTotal: AED ${total}\n`,
-            html: orderDetailsHtml,
-        };
-        console.log('Attempting to send email with options:', mailOptions);
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully. Nodemailer info:', info);
-    } catch (mailErr) {
-        console.error('Nodemailer error:', mailErr);
-    }
-}
+// if (email) {
+//     try {
+//         const mailOptions = {
+//             from: process.env.SMTP_FROM_MAIL,
+//             to: email,
+//             subject: 'Order Confirmation',
+//             text: `Thank you for your order!\nOrder ID: ${orderDoc._id}\nTotal: AED ${total}\n`,
+//             html: orderDetailsHtml,
+//         };
+//         console.log('Attempting to send email with options:', mailOptions);
+//         const info = await transporter.sendMail(mailOptions);
+//         console.log('Email sent successfully. Nodemailer info:', info);
+//     } catch (mailErr) {
+//         console.error('Nodemailer error:', mailErr);
+//     }
+// }
     res.status(200).json({ message: 'Order placed successfully', orderId: orderDoc._id });
 
 }

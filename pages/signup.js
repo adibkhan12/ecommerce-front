@@ -178,7 +178,7 @@ export default function SignUpPage() {
         name: "",
         email: "",
         password: "",
-        rePassword: "",
+        rePassword: ""
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -210,7 +210,7 @@ export default function SignUpPage() {
                 body: JSON.stringify({
                     name: form.name,
                     email: form.email,
-                    password: form.password,
+                    password: form.password
                 }),
             });
             const data = await res.json();
@@ -308,7 +308,7 @@ export default function SignUpPage() {
                                 disabled={loading}
                             />
                         </FieldGroup>
-                        <ErrorMsg>
+                                                <ErrorMsg>
                             {error && (
                                 <>
                                     <svg viewBox="0 0 24 24" fill="none">
