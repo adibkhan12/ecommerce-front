@@ -215,100 +215,189 @@ export default function ProductPage({ product, relatedProducts = [] }) {
       setDeliveryEstimate(d.toLocaleDateString('en-GB', { timeZone: 'UTC' }));
     }, []);
 
+    // Color variant selection state
+    const [selectedColorIdx, setSelectedColorIdx] = useState(
+      product.colorVariants && product.colorVariants.length > 0 ? 0 : null
+    );
+    const hasColorVariants = product.colorVariants && product.colorVariants.length > 0;
+    // Get images to show: color variant images if selected, else fallback
+    const imagesToShow = hasColorVariants
+      ? (product.colorVariants[selectedColorIdx]?.images?.length > 0
+          ? product.colorVariants[selectedColorIdx].images
+          : product.images)
+      : product.images;
+    // Main image selection for smooth transition
+    const [selectedImage, setSelectedImage] = useState(imagesToShow[0]);
+    // Reset main image when color or imagesToShow changes
+    useEffect(() => {
+      setSelectedImage(imagesToShow[0]);
+    }, [imagesToShow]);
+
     return (
         <>
             <Header />
             <Center>
                 <ColsWrapper>
-                    <ImageBox>
-                        <ProductImages images={product.images} />
-                    </ImageBox>
-                    <ProductDetails>
-                        <Title style={{
-                          fontSize: '2.5rem',
-                          fontWeight: 800,
-                          color: '#222',
-                          marginBottom: 8,
-                          letterSpacing: '0.5px',
-                          background: 'linear-gradient(90deg, #ff9900 0%, #ff4500 100%)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                        }}>{product.title}</Title>
-                        <TabsWrapper>
-                          <Tab active={tab==='description'} onClick={()=>setTab('description')}>Description</Tab>
-                          <Tab active={tab==='specs'} onClick={()=>setTab('specs')}>Specifications</Tab>
-                          <Tab active={tab==='reviews'} onClick={()=>setTab('reviews')}>Reviews</Tab>
-                          <Tab active={tab==='qa'} onClick={()=>setTab('qa')}>Q&amp;A</Tab>
-                        </TabsWrapper>
-                        <TabPanel>
-                          {tab==='description' && (
-                            <ProductDescription dangerouslySetInnerHTML={{ __html: product.description.replace(/\n/g, '<br />') }} />
-                          )}
-                          {tab==='specs' && product.properties && (
-                            <div style={{ margin: '10px 0 18px 0' }}>
-                              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '1.05rem' }}>
-                                <tbody>
-                                  {Object.entries(product.properties).map(([key, value]) => (
-                                    <tr key={key}>
-                                      <td style={{ fontWeight: 600, color: '#ff9900', padding: '8px 12px', background: '#fff7e6', border: '1px solid #f0f0f0' }}>{key.charAt(0).toUpperCase() + key.slice(1)}</td>
-                                      <td style={{ color: '#333', padding: '8px 12px', border: '1px solid #f0f0f0' }}>{value}</td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          )}
-                          {tab==='reviews' && (
-                            <ReviewsTab productId={product._id} />
-                          )}
-                          {tab==='qa' && (
-                            <QATab productId={product._id} />
-                          )}
-                        </TabPanel>
-                        <hr style={{ border: 0, borderTop: '1.5px solid #f0f0f0', margin: '18px 0 0 0' }} />
-                        <PriceRow>
-                            <Price>AED {product.price}</Price>
-                            {product.stock === 0 ? (
-                              <span style={{ color: 'red', fontWeight: 600, fontSize: '1.13rem', marginTop: 18 }}>
-                                Out of Stock
-                              </span>
-                            ) : (
-                              <StyledButton onClick={() => addProduct(product._id)} primary={1} outline={1} style={{
-                                minWidth: 180,
-                                fontSize: '1.13rem',
-                                fontWeight: 700,
-                                background: 'linear-gradient(90deg, #ff9900 0%, #ff4500 100%)',
-                                color: '#fff',
-                                border: 'none',
-                                boxShadow: '0 2px 8px rgba(255,153,0,0.10)',
-                                marginTop: 18,
-                              }}>
-                                <CartIcon />
-                                Add to Cart
-                              </StyledButton>
-                            )}
-                        </PriceRow>
-                        <div style={{ color: '#4caf50', fontWeight: 600, fontSize: '1.08rem', marginTop: 8 }}>
-                          {product.stock === 0 ? 'Currently unavailable' : deliveryEstimate ? `Delivery by: ${deliveryEstimate}` : ''}
-                        </div>
-                        <div style={{ display: 'flex', gap: 24, marginTop: 18, alignItems: 'center', flexWrap: 'wrap' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <img src="https://img.icons8.com/ios-filled/50/lock--v1.png" alt="Secure Payment" style={{ width: 28, height: 28 }} />
-                          <span style={{ color: '#222', fontWeight: 600 }}>Secure Payment</span>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <img src="https://img.icons8.com/ios-filled/50/return-purchase.png" alt="Easy Returns" style={{ width: 28, height: 28 }} />
-                          <span style={{ color: '#222', fontWeight: 600 }}>Easy Returns</span>
-                          </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <img src="https://img.icons8.com/ios-filled/50/guarantee.png" alt="Warranty" style={{ width: 28, height: 28 }} />
-                          <span style={{ color: '#222', fontWeight: 600 }}>Warranty</span>
-                          </div>
-                          <div style={{ marginLeft: 12 }}>
-                            <a href="/policies" style={{ color: '#ff9900', fontWeight: 600, textDecoration: 'underline' }}>See all policies</a>
-                          </div>
-                        </div>
-                    </ProductDetails>
+                <ImageBox>
+                <ProductImages
+                images={imagesToShow}
+                selectedImage={selectedImage}
+                onSelectImage={setSelectedImage}
+                />
+                </ImageBox>
+                <ProductDetails>
+                <Title style={{
+                fontSize: '2.5rem',
+                fontWeight: 800,
+                color: '#222',
+                marginBottom: 8,
+                letterSpacing: '0.5px',
+                background: 'linear-gradient(90deg, #ff9900 0%, #ff4500 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                }}>{product.title}</Title>
+                {hasColorVariants && (
+                <div style={{ display: 'flex', gap: 16, margin: '18px 0 24px 0', alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ fontWeight: 600, color: '#555', marginRight: 8, fontSize: '1.13rem' }}>Color:</span>
+                {product.colorVariants.map((variant, idx) => (
+                <button
+                key={variant.color?._id || idx}
+                onClick={() => setSelectedColorIdx(idx)}
+                style={{
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                border: selectedColorIdx === idx ? '3px solid #ff9900' : '2px solid #ccc',
+                marginRight: 8,
+                background: '#fff',
+                cursor: 'pointer',
+                outline: 'none',
+                boxShadow: selectedColorIdx === idx ? '0 0 0 3px #ffe0b2' : 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+                position: 'relative',
+                transition: 'border 0.2s, box-shadow 0.2s',
+                }}
+                title={variant.color?.name || 'Color'}
+                >
+                {/* Show color swatch if available, else fallback icon */}
+                {variant.color?.hex ? (
+                <span style={{
+                display: 'inline-block',
+                width: 28,
+                height: 28,
+                borderRadius: '50%',
+                background: variant.color.hex,
+                border: '2px solid #eee',
+                }} />
+                ) : (
+                <span style={{
+                display: 'inline-block',
+                width: 28,
+                height: 28,
+                borderRadius: '50%',
+                background: '#eee',
+                border: '2px solid #ccc',
+                }} />
+                )}
+                {/* Tooltip */}
+                <span style={{
+                position: 'absolute',
+                left: '50%',
+                top: '110%',
+                transform: 'translateX(-50%)',
+                background: '#222',
+                color: '#fff',
+                fontSize: '0.95em',
+                padding: '2px 8px',
+                borderRadius: 6,
+                whiteSpace: 'nowrap',
+                opacity: 0.95,
+                pointerEvents: 'none',
+                zIndex: 10,
+                display: variant.color?.name ? 'block' : 'none',
+                }}>{variant.color?.name}</span>
+                </button>
+                ))}
+                </div>
+                )}
+                <TabsWrapper>
+                <Tab active={tab==='description'} onClick={()=>setTab('description')}>Description</Tab>
+                <Tab active={tab==='specs'} onClick={()=>setTab('specs')}>Specifications</Tab>
+                <Tab active={tab==='reviews'} onClick={()=>setTab('reviews')}>Reviews</Tab>
+                <Tab active={tab==='qa'} onClick={()=>setTab('qa')}>Q&amp;A</Tab>
+                </TabsWrapper>
+                <TabPanel>
+                {tab==='description' && (
+                <ProductDescription dangerouslySetInnerHTML={{ __html: product.description.replace(/\n/g, '<br />') }} />
+                )}
+                {tab==='specs' && product.properties && (
+                <div style={{ margin: '10px 0 18px 0' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '1.05rem' }}>
+                <tbody>
+                {Object.entries(product.properties).map(([key, value]) => (
+                <tr key={key}>
+                <td style={{ fontWeight: 600, color: '#ff9900', padding: '8px 12px', background: '#fff7e6', border: '1px solid #f0f0f0' }}>{key.charAt(0).toUpperCase() + key.slice(1)}</td>
+                <td style={{ color: '#333', padding: '8px 12px', border: '1px solid #f0f0f0' }}>{value}</td>
+                </tr>
+                ))}
+                </tbody>
+                </table>
+                </div>
+                )}
+                {tab==='reviews' && (
+                <ReviewsTab productId={product._id} />
+                )}
+                {tab==='qa' && (
+                <QATab productId={product._id} />
+                )}
+                </TabPanel>
+                <hr style={{ border: 0, borderTop: '1.5px solid #f0f0f0', margin: '18px 0 0 0' }} />
+                <PriceRow>
+                <Price>AED {product.price}</Price>
+                {product.stock === 0 ? (
+                <span style={{ color: 'red', fontWeight: 600, fontSize: '1.13rem', marginTop: 18 }}>
+                Out of Stock
+                </span>
+                ) : (
+                <StyledButton onClick={() => addProduct(product._id)} primary={1} outline={1} style={{
+                minWidth: 180,
+                fontSize: '1.13rem',
+                fontWeight: 700,
+                background: 'linear-gradient(90deg, #ff9900 0%, #ff4500 100%)',
+                color: '#fff',
+                border: 'none',
+                boxShadow: '0 2px 8px rgba(255,153,0,0.10)',
+                marginTop: 18,
+                }}>
+                <CartIcon />
+                Add to Cart
+                </StyledButton>
+                )}
+                </PriceRow>
+                <div style={{ color: '#4caf50', fontWeight: 600, fontSize: '1.08rem', marginTop: 8 }}>
+                {product.stock === 0 ? 'Currently unavailable' : deliveryEstimate ? `Delivery by: ${deliveryEstimate}` : ''}
+                </div>
+                <div style={{ display: 'flex', gap: 24, marginTop: 18, alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <img src="https://img.icons8.com/ios-filled/50/lock--v1.png" alt="Secure Payment" style={{ width: 28, height: 28 }} />
+                <span style={{ color: '#222', fontWeight: 600 }}>Secure Payment</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <img src="https://img.icons8.com/ios-filled/50/return-purchase.png" alt="Easy Returns" style={{ width: 28, height: 28 }} />
+                <span style={{ color: '#222', fontWeight: 600 }}>Easy Returns</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <img src="https://img.icons8.com/ios-filled/50/guarantee.png" alt="Warranty" style={{ width: 28, height: 28 }} />
+                <span style={{ color: '#222', fontWeight: 600 }}>Warranty</span>
+                </div>
+                <div style={{ marginLeft: 12 }}>
+                <a href="/policies" style={{ color: '#ff9900', fontWeight: 600, textDecoration: 'underline' }}>See all policies</a>
+                </div>
+                </div>
+                </ProductDetails>
                 </ColsWrapper>
             </Center>
             {relatedProducts.length > 0 && (

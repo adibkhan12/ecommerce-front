@@ -1,5 +1,5 @@
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import {useRef, useState} from "react";
 import Image from "next/image";
 
 // Styled Components
@@ -75,11 +75,30 @@ const ZoomModalOverlay = styled.div`
 `;
 // Remove ZoomModalImg styled.img, will use Next.js Image instead
 
-export default function ProductImages({ images }) {
-    const [selectedImage, setSelectedImage] = useState(images?.[0]);
+export default function ProductImages({ images, selectedImage, onSelectImage }) {
+    const [internalSelectedImage, setInternalSelectedImage] = useState(images?.[0]);
     const [zoomed, setZoomed] = useState(false);
     const scrollRef = useRef(null);
     let scrollInterval;
+
+    // Fade transition state
+    const [fade, setFade] = useState(false);
+
+    // Determine which image to show (controlled or internal)
+    const imageToShow = selectedImage !== undefined ? selectedImage : internalSelectedImage;
+
+    // When images prop changes, reset selected image
+    React.useEffect(() => {
+        if (images && images.length > 0) {
+            if (onSelectImage) {
+                onSelectImage(images[0]);
+            } else {
+                setInternalSelectedImage(images[0]);
+            }
+            setFade(true);
+            setTimeout(() => setFade(false), 250);
+        }
+    }, [images]);
 
     const startScroll = (direction) => {
         if (scrollRef.current) {
@@ -99,23 +118,34 @@ export default function ProductImages({ images }) {
 
     return (
         <div>
-            <MainImageContainer onClick={() => setZoomed(true)} style={{ cursor: 'zoom-in' }}>
-                {selectedImage && (
+            <MainImageContainer
+                onClick={() => setZoomed(true)}
+                style={{ cursor: 'zoom-in', position: 'relative' }}
+            >
+                {imageToShow && (
                   <Image
-                    src={selectedImage}
+                    src={imageToShow}
                     alt="Selected Product Image"
                     width={500}
                     height={500}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      opacity: fade ? 0 : 1,
+                      transition: 'opacity 0.25s',
+                      position: 'relative',
+                      zIndex: 2,
+                    }}
                     priority={false}
                   />
                 )}
             </MainImageContainer>
             {zoomed && (
               <ZoomModalOverlay onClick={() => setZoomed(false)}>
-                {selectedImage && (
+                {imageToShow && (
                   <Image
-                    src={selectedImage}
+                    src={imageToShow}
                     alt="Zoomed Product"
                     width={900}
                     height={900}
@@ -130,8 +160,16 @@ export default function ProductImages({ images }) {
                     {images.map((image, index) => (
                         <div
                           key={index}
-                          style={{ border: selectedImage === image ? '2px solid #ccc' : '2px solid transparent', borderRadius: 4, padding: 2, cursor: 'pointer', width: 60, height: 60 }}
-                          onClick={() => setSelectedImage(image)}
+                          style={{ border: imageToShow === image ? '2px solid #ff9900' : '2px solid transparent', borderRadius: 4, padding: 2, cursor: 'pointer', width: 60, height: 60 }}
+                          onClick={() => {
+                            if (onSelectImage) {
+                              onSelectImage(image);
+                            } else {
+                              setInternalSelectedImage(image);
+                            }
+                            setFade(true);
+                            setTimeout(() => setFade(false), 250);
+                          }}
                         >
                           <Image
                             src={image}

@@ -213,7 +213,7 @@ function StarRating({ value }) {
 }
 
 const ProductWhiteBox = ({
-    _id, title, price, images, wished: initialWished,
+    _id, title, price, images, colorVariants, wished: initialWished,
     stock,
     compareEnabled = false,
     compareChecked = false,
@@ -331,17 +331,28 @@ const ProductWhiteBox = ({
                 </div>
                 <WhiteBox href={url}>
                     <div className="image-container">
-                        {images?.[0] && (
-                          <Image
-                            ref={imgRef}
-                            src={images[0]}
-                            alt={title}
-                            width={200}
-                            height={200}
-                            style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-                            priority={false}
-                          />
-                        )}
+                        {(() => {
+                          let displayImg = images?.[0];
+                          if (
+                            Array.isArray(colorVariants) &&
+                            colorVariants.length > 0 &&
+                            Array.isArray(colorVariants[0].images) &&
+                            colorVariants[0].images.length > 0
+                          ) {
+                            displayImg = colorVariants[0].images[0];
+                          }
+                          return displayImg ? (
+                            <Image
+                              ref={imgRef}
+                              src={displayImg}
+                              alt={title}
+                              width={200}
+                              height={200}
+                              style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                              priority={false}
+                            />
+                          ) : null;
+                        })()}
                     </div>
                 </WhiteBox>
             </div>

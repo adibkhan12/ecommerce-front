@@ -8,6 +8,7 @@ import Title from "@/components/Title";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import CustomSelect from "@/components/CustomSelect";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
 import {WishedProduct} from "@/models/WishedProduct";
@@ -87,22 +88,22 @@ export default function ProductPage({ products: originalProducts, wishedProducts
             <FilterWrapper>
               <Filter>
                 <span>Brand:</span>
-                <select value={brand} onChange={e => setBrand(e.target.value)}>
+                <CustomSelect value={brand} onChange={e => setBrand(e.target.value)}>
                   <option value="all">All</option>
                   {brands.map(b => (
                     <option key={b} value={b}>{b}</option>
                   ))}
-                </select>
+                </CustomSelect>
               </Filter>
               <Filter>
                 <span>Sorting:</span>
-                <select value={sort} onChange={e => setSort(e.target.value)}>
+                <CustomSelect value={sort} onChange={e => setSort(e.target.value)}>
                   <option value="price_asc">Price, Lowest First</option>
                   <option value="price_desc">Price, Highest First</option>
                   <option value="name_asc">Name, A-Z</option>
                   <option value="name_desc">Name, Z-A</option>
                   <option value="newest">Newest</option>
-                </select>
+                </CustomSelect>
               </Filter>
             </FilterWrapper>
             {products && products.length > 0 ? (
