@@ -6,11 +6,50 @@ import Footer from "@/components/Footer";
 import Script from "next/script"; // 💥 add this at the top with other imports
 
 const GlobalStyles = createGlobalStyle`
+    html {
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+    *, *:before, *:after {
+        box-sizing: inherit;
+    }
     body {
         background-color: #f9f9f9;
         padding: 0;
         margin: 0;
         font-family: 'Poppins', sans-serif;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    #__next {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    main, .main-content {
+        flex: 1 0 auto;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px 16px;
+    }
+    @media (max-width: 900px) {
+        html {
+            font-size: 15px;
+        }
+        main, .main-content {
+            max-width: 100vw;
+            padding: 18px 6px;
+        }
+    }
+    @media (max-width: 600px) {
+        html {
+            font-size: 14px;
+        }
+        main, .main-content {
+            padding: 10px 2px;
+        }
     }
 `;
 

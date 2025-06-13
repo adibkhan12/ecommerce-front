@@ -27,45 +27,7 @@ export default function HomePage({ featuredProducts, newProducts, wishedNewProdu
       {categoriesWithProducts && categoriesWithProducts.map(cat => (
         <CategorySection key={cat._id} {...cat} wishedProducts={cat.wishedProducts} />
       ))}
-      {/* Newsletter Signup */}
-      <div style={{ background: '#fffbe6', padding: '32px 0', marginTop: 32, textAlign: 'center', borderTop: '1px solid #ffe58f' }}>
-        <h2 style={{ fontWeight: 700, fontSize: '2rem', marginBottom: 12, color: '#ff9900' }}>Subscribe to Our Newsletter</h2>
-        <p style={{ marginBottom: 18, color: '#555' }}>Get updates on new products, offers, and more. No spam.</p>
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            const email = e.target.email.value;
-            if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-              alert('Please enter a valid email address.');
-              return;
-            }
-            // TODO: Integrate with backend or email service
-            await Swal.fire({
-              icon: 'success',
-              title: 'Subscribed!',
-              text: 'Thank you for subscribing! You will now receive updates from us.',
-              confirmButtonColor: '#ff9900',
-            });
-            e.target.reset();
-          }}
-          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12 }}
-        >
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            required
-            style={{ padding: '12px 18px', borderRadius: 8, border: '1.5px solid #ff9900', fontSize: '1.1rem', minWidth: 260 }}
-          />
-          <button
-            type="submit"
-            style={{ background: '#ff9900', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px', fontWeight: 600, fontSize: '1.1rem', cursor: 'pointer' }}
-          >
-            Subscribe
-          </button>
-        </form>
-      </div>
-    </div>
+          </div>
   );
 }
 
