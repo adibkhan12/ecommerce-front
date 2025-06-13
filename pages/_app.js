@@ -3,6 +3,7 @@ import { CartContextProvider } from "@/components/CartContext";
 import { SessionProvider } from "next-auth/react";
 import Whatsapp from "@/components/Whatsapp";
 import Footer from "@/components/Footer";
+import Script from "next/script"; // 💥 add this at the top with other imports
 
 const GlobalStyles = createGlobalStyle`
     body {
@@ -54,6 +55,24 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
             <BorderGap>
                 <Footer/>
             </BorderGap>
+            <Script
+            id="tawkto-script"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+                __html: `
+                var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+                (function(){
+                    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+                    s1.async=true;
+                    s1.src='https://embed.tawk.to/684c4d3cac212a190e45f2b1/1itl0rdtm';
+                    s1.charset='UTF-8';
+                    s1.setAttribute('crossorigin','*');
+                    s0.parentNode.insertBefore(s1,s0);
+                })();
+                `
+            }}
+            />
+
         </>
     );
 }
