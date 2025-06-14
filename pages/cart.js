@@ -58,6 +58,18 @@ const CartList = styled.div`
   gap: 16px;
 `;
 
+const ClearCartLink = styled.a`
+  color: #0070f3;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-left: auto;
+  text-decoration: underline;
+  cursor: pointer;
+  &:hover {
+    color: #ff4500;
+  }
+`;
+
 const CartItem = styled.div`
   display: flex;
   align-items: center;
@@ -378,7 +390,12 @@ export default function CartPage() {
           <TrustRow><FaLock /> 100% Secure &amp; Encrypted</TrustRow>
         </Card>
         <Card>
-          <SectionTitle>Cart Items</SectionTitle>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+            <SectionTitle>Cart Items</SectionTitle>
+            {cart.items && cart.items.length > 0 && (
+              <ClearCartLink onClick={clearCart}>Clear Cart</ClearCartLink>
+            )}
+          </div>
           {(!cart.items || cart.items.length === 0) && (
             <div><p>Your cart is empty</p></div>
           )}

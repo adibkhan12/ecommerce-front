@@ -260,66 +260,62 @@ export default function ProductPage({ product, relatedProducts = [] }) {
                 <div style={{ display: 'flex', gap: 16, margin: '18px 0 24px 0', alignItems: 'center', flexWrap: 'wrap' }}>
                 <span style={{ fontWeight: 600, color: '#555', marginRight: 8, fontSize: '1.13rem' }}>Color:</span>
                 {product.colorVariants.map((variant, idx) => (
-                <button
-                key={variant.color?._id || idx}
-                onClick={() => setSelectedColorIdx(idx)}
-                style={{
-                width: 38,
-                height: 38,
-                borderRadius: '50%',
-                border: selectedColorIdx === idx ? '3px solid #ff9900' : '2px solid #ccc',
-                marginRight: 8,
-                background: '#fff',
-                cursor: 'pointer',
-                outline: 'none',
-                boxShadow: selectedColorIdx === idx ? '0 0 0 3px #ffe0b2' : 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 0,
-                position: 'relative',
-                transition: 'border 0.2s, box-shadow 0.2s',
-                }}
-                title={variant.color?.name || 'Color'}
-                >
-                {/* Show color swatch if available, else fallback icon */}
-                {variant.color?.hex ? (
-                <span style={{
-                display: 'inline-block',
-                width: 28,
-                height: 28,
-                borderRadius: '50%',
-                background: variant.color.hex,
-                border: '2px solid #eee',
-                }} />
-                ) : (
-                <span style={{
-                display: 'inline-block',
-                width: 28,
-                height: 28,
-                borderRadius: '50%',
-                background: '#eee',
-                border: '2px solid #ccc',
-                }} />
-                )}
-                {/* Tooltip */}
-                <span style={{
-                position: 'absolute',
-                left: '50%',
-                top: '110%',
-                transform: 'translateX(-50%)',
-                background: '#222',
-                color: '#fff',
-                fontSize: '0.95em',
-                padding: '2px 8px',
-                borderRadius: 6,
-                whiteSpace: 'nowrap',
-                opacity: 0.95,
-                pointerEvents: 'none',
-                zIndex: 10,
-                display: variant.color?.name ? 'block' : 'none',
-                }}>{variant.color?.name}</span>
-                </button>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 8 }}>
+                  <button
+                    key={variant.color?._id || idx}
+                    onClick={() => setSelectedColorIdx(idx)}
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: '50%',
+                      border: selectedColorIdx === idx ? '3px solid #ff9900' : '2px solid #ccc',
+                      background: '#fff',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      boxShadow: selectedColorIdx === idx ? '0 0 0 3px #ffe0b2' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 0,
+                      position: 'relative',
+                      transition: 'border 0.2s, box-shadow 0.2s',
+                    }}
+                    title={variant.color?.name || 'Color'}
+                  >
+                    {/* Show color swatch if available, else fallback icon */}
+                    {variant.color?.hex ? (
+                      <span style={{
+                        display: 'inline-block',
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        background: variant.color.hex,
+                        border: '2px solid #eee',
+                      }} />
+                    ) : (
+                      <span style={{
+                        display: 'inline-block',
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        background: '#eee',
+                        border: '2px solid #ccc',
+                      }} />
+                    )}
+                  </button>
+                  {/* Show color name below swatch */}
+                  {variant.color?.name && (
+                    <span style={{
+                      marginTop: 4,
+                      fontSize: '0.98em',
+                      color: '#555',
+                      fontWeight: 500,
+                      textAlign: 'center',
+                      maxWidth: 60,
+                      wordBreak: 'break-word',
+                    }}>{variant.color.name}</span>
+                  )}
+                </div>
                 ))}
                 </div>
                 )}
@@ -655,7 +651,10 @@ function ReviewsTab({ productId }) {
 export async function getServerSideProps(context) {
     await mongooseConnect();
     const {id} = context.query;
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).populate({
+      path: 'colorVariants.color',
+      select: 'name _id'
+    });
     // Fetch related products (same category, exclude self)
     let relatedProducts = [];
     if (product?.category) {
