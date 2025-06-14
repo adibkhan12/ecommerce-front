@@ -219,25 +219,15 @@ const ProductWhiteBox = ({
     compareChecked = false,
     onCompareChange = () => {},
     onRemoveFromWishlist = ()=>{},
-    reviews = [],
+    reviewSummary = null,
 }) => {
     const {addProduct}=useContext(CartContext)
     const url = '/product/'+_id;
     const[isWished,setIsWished] = useState(initialWished);
     const imgRef = useRef();
-    const [avgRating, setAvgRating] = useState(null);
     useEffect(() => {
         setIsWished(initialWished);
     }, [initialWished]);
-    // Calculate avgRating from reviews prop if provided
-    useEffect(() => {
-      if (Array.isArray(reviews) && reviews.length) {
-        const avg = reviews.reduce((a, r) => a + r.rating, 0) / reviews.length;
-        setAvgRating(avg);
-      } else {
-        setAvgRating(null);
-      }
-    }, [reviews]);
 
     function addToWishList(ev) {
         ev.preventDefault();
@@ -358,9 +348,9 @@ const ProductWhiteBox = ({
             </div>
             <ProductInfoBox>
                 <Title href={url}>{title}</Title>
-                {avgRating && (
-                  <div style={{ margin: '2px 0 4px 0' }}>
-                    <StarRating value={Math.round(avgRating)} />
+                {reviewSummary && reviewSummary.count > 0 && (
+                  <div style={{ margin: '2px 0 4px 0', color: '#ff9900', fontWeight: 600, fontSize: '1.01em' }}>
+                    <StarRating value={Math.round(reviewSummary.avgRating)} /> {reviewSummary.avgRating} ({reviewSummary.count})
                   </div>
                 )}
                 <PriceRow>
