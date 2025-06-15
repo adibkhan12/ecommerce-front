@@ -13,7 +13,6 @@ import { Product } from "@/models/product";
 import { WishedProduct } from "@/models/WishedProduct";
 import { mongooseConnect } from "@/lib/mongoose";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-// import {RevealWrapper} from "next-reveal";
 
 // Styled Components
 const CategoryWrapper = styled.div`

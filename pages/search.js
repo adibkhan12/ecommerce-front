@@ -20,11 +20,6 @@ const SearchContainer = styled.div`
     top: 80px;
 `;
 
-const StyledHeader = styled(Header)`
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-bottom: 1px solid #e9ecef;
-`;
 
 const SearchInput = styled(Input)`
     width: 100%;

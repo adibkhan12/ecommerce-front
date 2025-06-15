@@ -21,6 +21,7 @@ const ModalContent = styled.div`
   max-height: 90vh;
   overflow-x: auto;
   box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+  position: relative;
 `;
 
 const Table = styled.table`
@@ -63,7 +64,7 @@ export default function CompareModal({ products, onClose }) {
   const allKeys = Array.from(new Set(products.flatMap(p => Object.keys(p.properties || {}))));
   return (
     <ModalOverlay>
-      <ModalContent style={{ position: 'relative' }}>
+      <ModalContent>
         <CloseButton onClick={onClose} aria-label="Close">&times;</CloseButton>
         <h2 style={{ textAlign: 'center', marginBottom: 18 }}>Compare Products</h2>
         <Table>

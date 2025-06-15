@@ -7,7 +7,6 @@ import {Setting} from "@/models/Setting";
 import {getServerSession} from "next-auth";
 import {WishedProduct} from "@/models/WishedProduct";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import Swal from 'sweetalert2';
 
 const HeroBanner = dynamic(() => import("@/components/HeroBanner"), { ssr: false });
 const FeaturedSlider = dynamic(() => import("@/components/FeaturedSlider"), { ssr: false });

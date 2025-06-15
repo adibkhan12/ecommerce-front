@@ -47,15 +47,11 @@ export default async function handler(req, res) {
             if (!newCart) {
                 return res.status(400).json({ error: "Cart data is required." });
             }
-            // Defensive: Prevent upsert if identifier is null/empty (should never happen due to earlier check)
-            if (!identifier || typeof identifier !== "string" || !identifier.trim()) {
-            return res.status(400).json({ error: "Valid identifier is required (user email or guest id)." });
-            }
             // Try to update an existing record.
             const updatedCart = await Cart.findOneAndUpdate(
-            { identifier },
-            { ...newCart, identifier },
-            { new: true, upsert: true }
+                { identifier },
+                { ...newCart, identifier },
+                { new: true, upsert: true }
             );
             return res.status(200).json(updatedCart);
         } catch (error) {

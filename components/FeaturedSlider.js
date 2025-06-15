@@ -35,32 +35,7 @@ const SliderSection = styled.section`
   }
 `;
 
-const SlideBg = styled.div`
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  overflow: hidden;
-`;
-
-const SlideImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center;
-  display: block;
-  background: none;
-`;
-
-const Overlay = styled.div`
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg,rgba(20,20,20,0.85) 0%,rgba(20,20,20,0.5) 60%,rgba(20,20,20,0.1) 100%);
-  z-index: 2;
-`;
+// Removed unused SlideBg, SlideImage, and Overlay styled components
 
 const SlideRow = styled.div`
   display: flex;
@@ -292,7 +267,6 @@ export default function FeaturedSlider({ products = [] }) {
   }
   return (
     <SliderSection>
-      <SlideBg />
       <SlideRow>
         <SlideImageBox>
           {product.images?.[0] && (

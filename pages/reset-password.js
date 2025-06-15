@@ -6,7 +6,6 @@ import Button from "@/components/Button";
 import styled from "styled-components";
 import { primary } from "@/lib/colors";
 import Link from "next/link";
-import SeePassword from "@/components/see-password";
 
 const AuthWrapper = styled.div`
   max-width: 400px;
@@ -105,7 +104,7 @@ const BottomText = styled.div`
   font-size: 1rem;
 `;
 
-export default function ResetPasswordPage() {
+export function ResetPasswordPage() {
   const router = useRouter();
   const { token, email } = router.query;
   const [form, setForm] = useState({
@@ -157,7 +156,7 @@ export default function ResetPasswordPage() {
           <StyledForm onSubmit={handleSubmit}>
             <FieldGroup>
               <StyledLabel htmlFor="password">New Password</StyledLabel>
-              <SeePassword
+              <StyledInput
                 id="password"
                 name="password"
                 type="password"
@@ -170,7 +169,7 @@ export default function ResetPasswordPage() {
             </FieldGroup>
             <FieldGroup>
               <StyledLabel htmlFor="confirm">Confirm Password</StyledLabel>
-              <SeePassword
+              <StyledInput
                 id="confirm"
                 name="confirm"
                 type="password"
@@ -194,3 +193,5 @@ export default function ResetPasswordPage() {
     </>
   );
 }
+
+export default ResetPasswordPage;

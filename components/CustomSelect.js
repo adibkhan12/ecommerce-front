@@ -11,7 +11,7 @@ const SelectWrapper = styled.div`
   width: 180px;
   min-width: 120px;
   font-size: 1rem;
-  z-index: 20;
+  z-index: 1;
 `;
 
 const SelectedBox = styled.button`

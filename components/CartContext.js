@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";  // npm install uuid if not already installed
+import { v4 as uuidv4 } from "uuid";
 
 export const CartContext = createContext({});
 
@@ -10,91 +10,71 @@ export function CartContextProvider({ children }) {
     const [cart, setCart] = useState({ items: [], updatedAt: new Date() });
     const [guestId, setGuestId] = useState(null);
 
-    // For guests, generate or get unique guestId stored in localStorage.
+    // Handle guestId for non-logged-in users
     useEffect(() => {
         if (!session?.user?.email) {
-            const storedGuestId = window.localStorage.getItem("guestId");
-            if (storedGuestId) {
-                setGuestId(storedGuestId);
-            } else {
-                const newGuestId = uuidv4();
-                window.localStorage.setItem("guestId", newGuestId);
-                setGuestId(newGuestId);
+            let id = window.localStorage.getItem("guestId");
+            if (!id) {
+                id = uuidv4();
+                window.localStorage.setItem("guestId", id);
             }
+            setGuestId(id);
         }
     }, [session]);
 
-
-    // Fetch cart from DB (if exists), using session email or guestId.
+    // Fetch cart from DB
     const fetchCart = async () => {
+        const identifier = session?.user?.email || guestId;
+        if (!identifier) return;
         try {
-            const identifier = session?.user?.email || guestId;
-            if (!identifier) return;
             const res = await axios.get("/api/cart", { params: { identifier } });
-            if (res.status === 200 && res.data) {
-                setCart(res.data);
-            }
+            if (res.status === 200 && res.data) setCart(res.data);
         } catch (error) {
             console.error("Error fetching cart:", error);
         }
     };
 
-    // Update cart in DB via API PUT
+    // Update cart in DB
     const updateCart = async (updatedCart) => {
+        const identifier = session?.user?.email || guestId;
+        if (!identifier) return;
         try {
-            const identifier = session?.user?.email || guestId;
-            if (!identifier) return;
             await axios.put("/api/cart", { identifier, cart: updatedCart });
         } catch (error) {
             console.error("Error updating cart:", error);
         }
     };
 
-    // On mount or when session/guestId changes, fetch existing cart.
+    // Fetch cart on mount/session/guestId change
     useEffect(() => {
-        if (session?.user?.email || guestId) {
-            fetchCart();
-        }
+        if (session?.user?.email || guestId) fetchCart();
     }, [session, guestId]);
 
     const addProduct = async (productId, quantity = 1) => {
-        let newCart;
-        const index = cart.items.findIndex(item => String(item.product) === String(productId));
-        if (index !== -1) {
-            newCart = {
-                ...cart,
-                items: cart.items.map((item, i) =>
-                    i === index ? { ...item, quantity: item.quantity + quantity } : item
-                ),
-                updatedAt: new Date()
-            };
+        const idx = cart.items.findIndex(item => String(item.product) === String(productId));
+        let newItems = [...cart.items];
+        if (idx !== -1) {
+            newItems[idx] = { ...newItems[idx], quantity: newItems[idx].quantity + quantity };
         } else {
-            newCart = {
-                ...cart,
-                items: [...cart.items, { product: productId, quantity }],
-                updatedAt: new Date()
-            };
+            newItems.push({ product: productId, quantity });
         }
+        const newCart = { ...cart, items: newItems, updatedAt: new Date() };
         setCart(newCart);
         await updateCart(newCart);
-    }
+    };
 
     const removeProduct = async (productId) => {
-        const index = cart.items.findIndex(item => String(item.product) === String(productId));
-        if (index !== -1) {
-            const currentItem = cart.items[index];
-            let newItems;
-            if (currentItem.quantity > 1) {
-                newItems = cart.items.map((item, i) =>
-                    i === index ? { ...item, quantity: item.quantity - 1 } : item
-                );
-            } else {
-                newItems = cart.items.filter((item, i) => i !== index);
-            }
-            const newCart = { ...cart, items: newItems, updatedAt: new Date() };
-            setCart(newCart);
-            await updateCart(newCart);
+        const idx = cart.items.findIndex(item => String(item.product) === String(productId));
+        if (idx === -1) return;
+        let newItems = [...cart.items];
+        if (newItems[idx].quantity > 1) {
+            newItems[idx] = { ...newItems[idx], quantity: newItems[idx].quantity - 1 };
+        } else {
+            newItems.splice(idx, 1);
         }
+        const newCart = { ...cart, items: newItems, updatedAt: new Date() };
+        setCart(newCart);
+        await updateCart(newCart);
     };
 
     const clearCart = async () => {

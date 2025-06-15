@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "@/components/CartContext";
 import axios from "axios";
-// import Image from "next/image";
 import { FaLock, FaChevronLeft, FaMapMarkerAlt, FaUser, FaEnvelope, FaPhone, FaCity, FaFlag, FaCreditCard, FaMoneyBillWave } from 'react-icons/fa';
 
 const PageBg = styled.div`

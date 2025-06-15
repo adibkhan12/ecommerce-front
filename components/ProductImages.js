@@ -79,7 +79,7 @@ export default function ProductImages({ images, selectedImage, onSelectImage }) 
     const [internalSelectedImage, setInternalSelectedImage] = useState(images?.[0]);
     const [zoomed, setZoomed] = useState(false);
     const scrollRef = useRef(null);
-    let scrollInterval;
+    const scrollIntervalRef = useRef();
 
     // Fade transition state
     const [fade, setFade] = useState(false);
@@ -102,15 +102,21 @@ export default function ProductImages({ images, selectedImage, onSelectImage }) 
 
     const startScroll = (direction) => {
         if (scrollRef.current) {
-            scrollInterval = setInterval(() => {
-                scrollRef.current.scrollLeft += direction === "right" ? 20 : -20;
+            scrollIntervalRef.current = setInterval(() => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollLeft += direction === "right" ? 20 : -20;
+                }
             }, 50);
         }
     };
 
     const stopScroll = () => {
-        clearInterval(scrollInterval);
+        clearInterval(scrollIntervalRef.current);
     };
+
+    React.useEffect(() => {
+        return () => clearInterval(scrollIntervalRef.current);
+    }, []);
 
     if (!images || images.length === 0) {
         return <p>No images available</p>;
