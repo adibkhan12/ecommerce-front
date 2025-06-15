@@ -1,4 +1,5 @@
 import mongoose, { model, Schema, models } from 'mongoose';
+import './color';
 
 const ColorVariantSchema = new Schema({
   color: { type: mongoose.Types.ObjectId, ref: 'Color' },
