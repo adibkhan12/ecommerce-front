@@ -11,7 +11,7 @@ const SelectWrapper = styled.div`
   width: 180px;
   min-width: 120px;
   font-size: 1rem;
-  z-index: 1;
+  z-index: ${({ isOpen }) => (isOpen ? 999 : 1)};
 `;
 
 const SelectedBox = styled.button`
@@ -65,7 +65,7 @@ const Dropdown = styled.ul`
   margin: 0;
   padding: 6px 0;
   list-style: none;
-  z-index: 100;
+  z-index: 1000;
   border: 1.5px solid ${greenMain};
   max-height: 260px;
   overflow-y: auto;
@@ -115,7 +115,7 @@ export default function CustomSelect({ value, onChange, children, ...props }) {
   }
 
   return (
-    <SelectWrapper ref={wrapperRef} tabIndex={0}>
+    <SelectWrapper ref={wrapperRef} tabIndex={0} isOpen={open}>
       <SelectedBox type="button" onClick={() => setOpen(v => !v)} aria-haspopup="listbox" aria-expanded={open}>
         {selectedOption ? selectedOption.props.children : options[0]?.props.children}
         <Chevron>

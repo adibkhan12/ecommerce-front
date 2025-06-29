@@ -2,10 +2,11 @@ import Header from "@/components/Header";
 import Center from "@/components/Center";
 import Input from "@/components/Input";
 import styled from "styled-components";
-import {useCallback, useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import axios from "axios";
 import ProductsGrid from "@/components/ProductsGrid";
-import {debounce} from "lodash";
+import { debounce } from "lodash";
 
 // Styled Components
 const SearchContainer = styled.div`
@@ -41,33 +42,55 @@ const SearchInput = styled(Input)`
 `;
 
 export default function SearchPage() {
+    const router = useRouter();
     const [phrase, setPhrase] = useState('');
     const [products, setProducts] = useState([]);
     const debouncedSearch = useCallback(
         debounce(searchProducts, 500), []);
+
+    // Sync phrase from URL query
+    useEffect(() => {
+        if (router.isReady) {
+            const urlPhrase = router.query.phrase || '';
+            setPhrase(typeof urlPhrase === 'string' ? urlPhrase : '');
+        }
+    }, [router.isReady, router.query.phrase]);
+
+    // Search when phrase changes
     useEffect(() => {
         if (phrase.length > 0) {
             debouncedSearch(phrase);
-        }else {
+        } else {
             setProducts([]);
         }
-    }, [phrase]);
+    }, [phrase, debouncedSearch]);
 
     function searchProducts(phrase) {
-            axios.get ('/api/products?phrase='+encodeURIComponent(phrase))
-                .then(response => {
-                    setProducts(response.data);
-                });
+        axios.get('/api/products?phrase=' + encodeURIComponent(phrase))
+            .then(response => {
+                setProducts(response.data);
+            });
     }
+
+    // When user types, update URL
+    function handleInputChange(ev) {
+        const newPhrase = ev.target.value;
+        setPhrase(newPhrase);
+        router.replace({
+            pathname: '/search',
+            query: newPhrase ? { phrase: newPhrase } : {},
+        }, undefined, { shallow: true });
+    }
+
     return (
         <>
-            <StyledHeader />
+            <Header />
             <Center>
                 <SearchContainer>
                     <SearchInput
                         autoFocus
                         value={phrase}
-                        onChange={ev => setPhrase(ev.target.value)}
+                        onChange={handleInputChange}
                         placeholder="Search..." aria-label="Search" />
                 </SearchContainer>
                 {phrase !== '' && products.length === 0 && (

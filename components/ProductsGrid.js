@@ -77,8 +77,8 @@ export default function ProductsGrid({ products, wishedProducts, enableCompare }
         <button
           style={{
             position: 'fixed',
-            bottom: 32,
-            right: 32,
+            bottom: 110,
+            right: 25,
             zIndex: 10001,
             background: '#ff9900',
             color: '#fff',
