@@ -1,12 +1,17 @@
 import Header from "@/components/Header";
 import Center from "@/components/Center";
-import Input from "@/components/Input";
 import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import ProductsGrid from "@/components/ProductsGrid";
 import { debounce } from "lodash";
+// New components (to be created)
+import LoadingSpinner from "@/components/LoadingSpinner";
+import NoResultsIllustration from "@/components/NoResultsIllustration";
+import SuggestionGrid from "@/components/SuggestionGrid";
+import SearchPhraseBadge from "@/components/SearchPhraseBadge";
+import BackButton from "@/components/BackButton";
 
 // Styled Components
 const SearchContainer = styled.div`
@@ -22,29 +27,13 @@ const SearchContainer = styled.div`
 `;
 
 
-const SearchInput = styled(Input)`
-    width: 100%;
-    padding: 12px 16px;
-    font-size: 16px;
-    border: 1px solid #ced4da;
-    border-radius: 8px;
-    outline: none;
-    transition: border-color 0.3s ease;
-
-  &:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-
-  &::placeholder {
-    color: #adb5bd;
-  }
-`;
 
 export default function SearchPage() {
     const router = useRouter();
     const [phrase, setPhrase] = useState('');
     const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [suggestions, setSuggestions] = useState([]);
     const debouncedSearch = useCallback(
         debounce(searchProducts, 500), []);
 
@@ -62,14 +51,31 @@ export default function SearchPage() {
             debouncedSearch(phrase);
         } else {
             setProducts([]);
+            setSuggestions([]);
         }
     }, [phrase, debouncedSearch]);
 
     function searchProducts(phrase) {
+        setLoading(true);
         axios.get('/api/products?phrase=' + encodeURIComponent(phrase))
             .then(response => {
                 setProducts(response.data);
-            });
+                if (!response.data || response.data.length === 0) {
+                    // Try to get suggestions (broader search, e.g. by first word)
+                    const firstWord = phrase.split(' ')[0];
+                    if (firstWord && firstWord.length > 1) {
+                        axios.get('/api/products?phrase=' + encodeURIComponent(firstWord))
+                            .then(sugRes => {
+                                setSuggestions(sugRes.data || []);
+                            });
+                    } else {
+                        setSuggestions([]);
+                    }
+                } else {
+                    setSuggestions([]);
+                }
+            })
+            .finally(() => setLoading(false));
     }
 
     // When user types, update URL
@@ -86,17 +92,54 @@ export default function SearchPage() {
         <>
             <Header />
             <Center>
-                <SearchContainer>
-                    <SearchInput
-                        autoFocus
-                        value={phrase}
-                        onChange={handleInputChange}
-                        placeholder="Search..." aria-label="Search" />
-                </SearchContainer>
-                {phrase !== '' && products.length === 0 && (
-                    <h2>No Products found for "{phrase}"</h2>
-                )}
-                <ProductsGrid products={products} />
+                <div style={{
+                    maxWidth: 900,
+                    margin: '0 auto',
+                    background: '#fff',
+                    borderRadius: 16,
+                    boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+                    padding: '32px 24px 48px 24px',
+                    marginTop: 40,
+                    marginBottom: 40,
+                    position: 'relative',
+                }}>
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24}}>
+                        <h2 style={{
+                            fontWeight: 800,
+                            fontSize: 32,
+                            letterSpacing: 0.5,
+                            color: '#222',
+                            textTransform: 'uppercase',
+                            margin: 0,
+                        }}>
+                            Products Matching Your Search
+                        </h2>
+                        <BackButton href="/products" />
+                    </div>
+                    {phrase && <SearchPhraseBadge phrase={phrase} />}
+                    {loading ? (
+                        <div style={{margin: '48px 0'}}><LoadingSpinner /></div>
+                    ) : (
+                        <>
+                            {phrase !== '' && products.length === 0 && (
+                                <>
+                                    <div style={{margin: '48px 0'}}>
+                                        <NoResultsIllustration message="Not available at the moment" />
+                                    </div>
+                                    {suggestions.length > 0 && (
+                                        <div style={{marginTop: 32}}>
+                                            <h4 style={{textAlign: 'center', color: '#555', fontWeight: 600, fontSize: 20, marginBottom: 16}}>
+                                                Shop for these instead?
+                                            </h4>
+                                            <SuggestionGrid products={suggestions} />
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                            <ProductsGrid products={products} />
+                        </>
+                    )}
+                </div>
             </Center>
         </>
     );
