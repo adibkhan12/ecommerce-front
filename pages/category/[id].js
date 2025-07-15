@@ -18,11 +18,12 @@ const CategoryHeader = styled.div`
     h1 {
         font-size: 2rem;
         font-weight: bold;
-        color: #333;
-        background: linear-gradient(to right, #4caf50, #81c784);
+        color: ${({ theme }) => theme.textColor};
+        background: ${({ theme }) => theme.mode === 'dark' ? 'linear-gradient(to right, #43e97b, #38f9d7)' : 'linear-gradient(to right, #4caf50, #81c784)'};
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 0;
+        transition: color 0.3s, background 0.3s;
     }
 `;
 
@@ -33,54 +34,57 @@ const FilterWrapper = styled.div`
 `;
 
 const Filter = styled.div`
-    background-color: #f1f1f1;
+    background-color: ${({ theme }) => theme.mode === 'dark' ? '#23272a' : '#f1f1f1'};
     padding: 8px 15px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #555;
+    color: ${({ theme }) => theme.mode === 'dark' ? '#bfc9d1' : '#555'};
     font-size: 1rem;
     font-weight: 500;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 5px ${({ theme }) => theme.mode === 'dark' ? 'rgba(44,62,80,0.13)' : 'rgba(0, 0, 0, 0.1)'};
+    border: 1.5px solid ${({ theme }) => theme.mode === 'dark' ? '#393c41' : '#e0e0e0'};
+    transition: background-color 0.3s, box-shadow 0.3s, color 0.3s, border 0.3s;
 
     &:hover {
-        background-color: #e0e0e0;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        background-color: ${({ theme }) => theme.mode === 'dark' ? '#2c2f34' : '#e0e0e0'};
+        box-shadow: 0 4px 10px ${({ theme }) => theme.mode === 'dark' ? 'rgba(44,62,80,0.18)' : 'rgba(0, 0, 0, 0.15)'};
     }
 
     select {
         background-color: transparent;
         border: none;
         font-size: 1rem;
-        color: #555;
+        color: ${({ theme }) => theme.mode === 'dark' ? '#bfc9d1' : '#555'};
         outline: none;
         cursor: pointer;
 
         &:hover {
-            color: #333;
+            color: ${({ theme }) => theme.mode === 'dark' ? '#fff' : '#333'};
         }
     }
 
     span {
         font-weight: bold;
-        color: #4caf50;
+        color: ${({ theme }) => theme.mode === 'dark' ? '#43e97b' : '#4caf50'};
     }
 `;
 
 const NoProductsMessage = styled.div`
     text-align: center;
     font-size: 1.2rem;
-    color: #999;
+    color: ${({ theme }) => theme.mode === 'dark' ? '#bfc9d1' : '#999'};
     margin-top: 50px;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: ${({ theme }) => theme.mode === 'dark' ? '#23272a' : '#f9f9f9'};
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px ${({ theme }) => theme.mode === 'dark' ? 'rgba(44,62,80,0.13)' : 'rgba(0, 0, 0, 0.1)'};
+    border: 1.5px solid ${({ theme }) => theme.mode === 'dark' ? '#393c41' : '#e0e0e0'};
+    transition: background 0.3s, color 0.3s, box-shadow 0.3s, border 0.3s;
 
     span {
-        color: #4caf50;
+        color: ${({ theme }) => theme.mode === 'dark' ? '#43e97b' : '#4caf50'};
         font-weight: bold;
     }
 `;

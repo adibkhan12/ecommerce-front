@@ -3,6 +3,8 @@ import Link from "next/link";
 import styled from "styled-components";
 import Center from "@/components/Center";
 import { useContext, useState, useRef, useEffect } from "react";
+// import { ThemeContext } from "../pages/_app";
+// import { FaMoon, FaSun } from "react-icons/fa";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { CartContext } from "@/components/CartContext";
@@ -319,6 +321,7 @@ export default function Header() {
         router.push(`/search?phrase=${encodeURIComponent(title)}`);
         handleCloseSearch();
     }
+    // const { mode, toggleTheme } = useContext(ThemeContext);
 
     return (
         <StyledHeader>
@@ -354,6 +357,13 @@ export default function Header() {
                         >
                             <SearchIcon style={{ width: 20, height: 20 }} />
                         </button>
+                        {/* <button
+                            aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                            style={{ background: "none", border: "none", color: "white", cursor: "pointer", display: searchActive ? 'none' : 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 32, minHeight: 32, padding: 0 }}
+                            onClick={toggleTheme}
+                        >
+                            {mode === "dark" ? <FaSun style={{ width: 20, height: 20 }} /> : <FaMoon style={{ width: 20, height: 20 }} />}
+                        </button> */}
                         <NavButton 
                             onClick={() => setMobileNavActive((prev) => !prev)}
                             aria-label={mobileNavActive ? "Close menu" : "Open menu"}
