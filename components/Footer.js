@@ -206,6 +206,10 @@ export default function Footer() {
             <a href="tel:566130458">+971-56-6130458</a>
             </ContactRow>
             <ContactRow>
+            <span className="emoji" role="img" aria-label="landline">☎️</span>
+            <a href="tel:67317652">+971-67-317652</a>
+            </ContactRow>
+            <ContactRow>
             <span className="emoji" role="img" aria-label="email">✉️</span>
             <a href="mailto:sa@shahzadmobile.com">sa@shahzadmobile.com</a>
             </ContactRow>

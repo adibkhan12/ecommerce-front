@@ -115,6 +115,9 @@ export default function AboutPage() {
                 <div style={{marginTop:'8px'}}>
                   <b>WhatsApp:</b> <a href="https://wa.me/971566130458" style={{color:'#25d366',fontWeight:700}}>+971-56-6130458</a>
                 </div>
+                <div style={{marginTop:'6px'}}>
+                  <b>LandLine:</b> <a href="tel:067317652" style={{color:'#ff9900'}}>067317652</a>
+                </div>
               </ContactBox>
             </ProfileCard>
             <Divider />
