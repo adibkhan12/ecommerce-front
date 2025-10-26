@@ -5,7 +5,7 @@ import { mongooseConnect } from "@/lib/mongoose";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 
-export default NextAuth({
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -33,16 +33,17 @@ export default NextAuth({
     }),
   ],
   pages: {
-    signIn: "/signin"
+    signIn: "/signin",
   },
   session: {
     strategy: "jwt",
   },
   callbacks: {
-    // You can customize user, session, jwt, etc., here if needed
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       if (token?.sub) session.user.id = token.sub;
       return session;
     },
   },
-});
+};
+
+export default NextAuth(authOptions);

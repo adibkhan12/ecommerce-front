@@ -1,8 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-    experimental: {
+  experimental: {
     scrollRestoration: true,
+  },
+  compiler: {
+    styledComponents: true,
+  },
+  eslint: {
+    // Avoid CI build failures due to ESLint serialization issues
+    ignoreDuringBuilds: true,
   },
   images: {
     remotePatterns: [
