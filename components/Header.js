@@ -357,13 +357,15 @@ export default function Header() {
                         >
                             <SearchIcon style={{ width: 20, height: 20 }} />
                         </button>
-                        {/* <button
+                        {/* Theme toggle hidden
+                        <button
                             aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
                             style={{ background: "none", border: "none", color: "white", cursor: "pointer", display: searchActive ? 'none' : 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 32, minHeight: 32, padding: 0 }}
                             onClick={toggleTheme}
                         >
                             {mode === "dark" ? <FaSun style={{ width: 20, height: 20 }} /> : <FaMoon style={{ width: 20, height: 20 }} />}
-                        </button> */}
+                        </button>
+                        */}
                         <NavButton 
                             onClick={() => setMobileNavActive((prev) => !prev)}
                             aria-label={mobileNavActive ? "Close menu" : "Open menu"}
