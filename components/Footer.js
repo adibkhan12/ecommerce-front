@@ -203,11 +203,11 @@ export default function Footer() {
             </ContactRow>
             <ContactRow>
             <span className="emoji" role="img" aria-label="phone">📞</span>
-            <a href="tel:566130458">+971-566130458</a>
+            <a href="tel:0566130458">+971-566130458</a>
             </ContactRow>
             <ContactRow>
             <span className="emoji" role="img" aria-label="phone">📞</span>
-            <a href="tel:559879422">+971-559879422</a>
+            <a href="tel:0559879422">+971-559879422</a>
             </ContactRow>
             <ContactRow>
             <span className="emoji" role="img" aria-label="email">✉️</span>
