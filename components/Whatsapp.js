@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 
@@ -57,7 +57,7 @@ const Message = styled.div`
     left: 84px;
     background: #fff;
     color: #222;
-    padding: 10px 18px;
+    padding: 10px 12px 10px 18px;
     border-radius: 22px;
     box-shadow: 0 2px 8px rgba(44,62,80,0.10);
     font-size: 1.08rem;
@@ -69,13 +69,36 @@ const Message = styled.div`
     @media (max-width: 600px) {
         left: 58px;
         font-size: 0.98rem;
-        padding: 7px 12px;
+        padding: 7px 10px 7px 12px;
     }
+`;
+
+const CloseBtn = styled.button`
+    all: unset;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-left: 6px;
+    color: #888;
+    &:hover { color: #333; }
 `;
 
 export default function Whatsapp() {
     const phoneNumber = "+971566130458";
     const message = encodeURIComponent("Hello, I'm interested in your products!");
+
+    const [visible, setVisible] = useState(true);
+
+    
+    function hide() {
+        setVisible(false);
+    }
+
+    if (!visible) return null;
 
     return (
         <>
@@ -88,7 +111,8 @@ export default function Whatsapp() {
                 <Image src="/whatsapp-icon.png" alt="WhatsApp" width={30} height={30} />
             </FloatingButton>
             <Message>
-                Prefer WhatsApp? Chat with us instantly!
+                <span>Prefer WhatsApp? Chat with us instantly!</span>
+                <CloseBtn onClick={hide} aria-label="Close WhatsApp helper" title="Close">✕</CloseBtn>
             </Message>
         </>
     );

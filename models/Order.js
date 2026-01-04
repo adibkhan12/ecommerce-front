@@ -20,10 +20,18 @@ const OrderSchema = new Schema({
     addressLine1: String,
     addressLine2: String,
     country: String,
-    paid:Boolean,
+    paid: { type: Boolean, default: null },
     number: String,
     referralSource: { type: String, default: "" },
     referralOther: { type: String, default: "" },
+
+    // Payment meta
+    paymentMethod: { type: String, enum: ["COD", "tamara", "tabby", "card"], default: "COD" },
+    status: { type: String, enum: ["pending", "authorized", "paid", "failed", "canceled"], default: "pending" },
+    provider: { type: String, default: null },
+    providerRef: { type: String, default: null },
+    currency: { type: String, default: "AED" },
+    amount: { type: Number, default: 0 },
 },  {
     timestamps: true,
 });

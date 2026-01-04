@@ -246,7 +246,7 @@ export default function CartPage() {
   const [country, setCountry] = useState("");
   const [isClient, setIsClient] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
-  const [paymentMethod] = useState('cod');
+  const [paymentMethod, setPaymentMethod] = useState('COD');
   const [referralSource, setReferralSource] = useState("");
   const [referralOther, setReferralOther] = useState("");
 
@@ -346,6 +346,39 @@ export default function CartPage() {
     }
   }
 
+  async function placeOrderBNPL(method) {
+    if (!validateForm()) return;
+    try {
+      const response = await axios.post('/api/checkout', {
+        name,
+        email,
+        city,
+        postalCode,
+        addressLine1,
+        addressLine2,
+        number,
+        country,
+        cartProducts: cart.items,
+        paymentMethod: method,
+        referralSource,
+        referralOther,
+      });
+      if (response.status === 200 && response.data?.redirectUrl) {
+        window.location.href = response.data.redirectUrl;
+      } else {
+        alert('Failed to start payment.');
+      }
+    } catch (e) {
+      alert('Payment error. Please try another method.');
+    }
+  }
+
+  function placeOrder() {
+    if (paymentMethod === 'COD') return placeOrderCOD();
+    if (paymentMethod === 'tamara') return placeOrderBNPL('tamara');
+    if (paymentMethod === 'tabby') return placeOrderBNPL('tabby');
+  }
+
   let total = 0;
   products.forEach(product => {
     const cartItem = cart.items.find(item => String(item.product) === String(product._id));
@@ -442,7 +475,7 @@ export default function CartPage() {
         </div>
         <Card>
           <SectionTitle><FaMapMarkerAlt /> Delivery Details</SectionTitle>
-          <form onSubmit={e => { e.preventDefault(); placeOrderCOD(); }} autoComplete="on">
+          <form onSubmit={e => { e.preventDefault(); placeOrder(); }} autoComplete="on">
             <InputGroup>
               <InputIcon><FaUser /></InputIcon>
               <StyledInput
@@ -562,22 +595,19 @@ export default function CartPage() {
               )}
             </FieldGroup>
             <PaymentOptions>
-              <label className="disabled"><FaCreditCard />
-                <input type="radio" name="payment" value="credit_card" checked={false} disabled />
-                Credit Card (Coming Soon)
-              </label>
-              <label className="disabled"><FaCreditCard />
-                <input type="radio" name="payment" value="paypal" checked={false} disabled />
-                PayPal (Coming Soon)
-              </label>
-              <label className="active"><FaMoneyBillWave />
-                <input type="radio" name="payment" value="cod" checked readOnly />
+              <label className={paymentMethod === 'COD' ? 'active' : ''}><FaMoneyBillWave />
+                <input type="radio" name="payment" value="COD" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')} />
                 Cash on Delivery
               </label>
+              <label className={paymentMethod === 'tamara' ? 'active' : ''}><FaCreditCard />
+                <input type="radio" name="payment" value="tamara" checked={paymentMethod === 'tamara'} onChange={() => setPaymentMethod('tamara')} />
+                Tamara (Pay in installments)
+              </label>
+              <label className={paymentMethod === 'tabby' ? 'active' : ''}><FaCreditCard />
+                <input type="radio" name="payment" value="tabby" checked={paymentMethod === 'tabby'} onChange={() => setPaymentMethod('tabby')} />
+                Tabby (Pay later)
+              </label>
             </PaymentOptions>
-            <div style={{ marginTop: 6, color: '#ff9900', fontWeight: 500, fontSize: '0.98rem' }}>
-              Only Cash on Delivery is available at the moment.
-            </div>
             <div style={{ height: 70 }} />
           </form>
         </Card>
@@ -588,7 +618,7 @@ export default function CartPage() {
               <span>Total</span>
               <span style={{ color: '#0070f3', fontWeight: 700 }}>AED {total}</span>
             </div>
-            <PlaceOrderBtn onClick={placeOrderCOD}>Place Order</PlaceOrderBtn>
+            <PlaceOrderBtn onClick={placeOrder}>Place Order</PlaceOrderBtn>
           </StickySummary>
         )}
       </Main>
